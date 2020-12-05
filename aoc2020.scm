@@ -6,6 +6,7 @@
 (define (solve lst)
   (cond ((null? lst) '())
         (else (report (cdr lst)) (map (lambda (x) (check (car lst) x)) (cdr lst)))))
+
 (filter number? (solve datas))
 
 ;; 1b
