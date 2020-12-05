@@ -1,3 +1,6 @@
+;; Advent of Code 2020
+;; https://adventofcode.com/2020
+
 ;; 1a -- Day 1: Report Repair
 
 (define (check n1 n2)
