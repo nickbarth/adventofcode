@@ -1,6 +1,9 @@
 ;; Advent of Code 2020
 ;; https://adventofcode.com/2020
 
+(import srfi-1)
+(import regex)
+
 ;; 1a -- Day 1: Report Repair
 
 (define (check n1 n2)
@@ -69,16 +72,60 @@
 
 ;; 4a -- Day 4: Passport Processing
 
-(define (check x lst)
+(define (check-keys x lst)
   (cond ((member x lst) #t)
         (else #f)))
-(check 'ecl '( ecl gry pid 860033327 eyr 2020 hcl \#fffffd byr 1937 iyr 2017 cid 147 hgt 183cm ))
 
-(define (valid lst checks)
-  (cond ((null? checks) 1)
-        ((check (car checks) lst) (valid lst (cdr checks)))
-        (else 0)))
-(valid '(ecl gry pid 860033327 eyr 2020 hcl \#fffffd byr 1937 iyr 2017 cid 147 hgt 183cm) '(byr iyr eyr hgt hcl ecl pid))
+(define (has-keys lst keys)
+  (cond ((null? keys) #t)
+        ((check-keys (car keys) lst) (valid lst (cdr keys)))
+        (else #f)))
 
-(define checks '(byr iyr eyr hgt hcl ecl pid))
-(foldl + 0 (map (lambda (x) (valid x checks)) datas))
+(define keys '(byr iyr eyr hgt hcl ecl pid))
+(length (filter (lambda (x) (valid x keys)) datas))
+
+;; 4b
+
+(define (pairs lst)
+  (cond ((null? lst) '())
+        (else (cons (list (car lst) (cadr lst)) (pairs (cddr lst))))))
+
+(define (in-range low high n)
+  (cond ((not (<= low n high))  #f)
+        (else #t)))
+
+(define (byr n)
+  (in-range 1920 2002 (string->number n)))
+
+(define (iyr n)
+  (in-range 2010 2020 (string->number n)))
+
+(define (eyr n)
+  (in-range 2020 2030 (string->number n)))
+
+(define (hgt s)
+  (cond ((string-match "[0-9]*cm" s)
+            (in-range 150 193 (string->number (cadr (string-match "([0-9]*)cm" s)))))
+        ((string-match "[0-9]*in" s)
+            (in-range  59  76 (string->number (cadr (string-match "([0-9]*)in" s)))))
+        (else #f)))
+
+(define (hcl s)
+  (cond ((string-match "#[0-9a-f]{6}" s) #t)
+        (else #f)))
+
+(define (ecl s)
+  (cond ((string-match "(amb|blu|brn|gry|grn|hzl|oth)" s) #t)
+        (else #f)))
+
+(define (pid s)
+  (cond ((string-match "[0-9]{9}" s) #t)
+        (else #f)))
+
+(define (cid s) #t)
+
+(define (check-values lst)
+  (foldl (lambda (n res) (and n res)) #t (map eval (pairs lst))))
+
+(length (filter (lambda (x) (check-values x)) 
+  (filter (lambda (x) (has-keys x keys)) datas)))
