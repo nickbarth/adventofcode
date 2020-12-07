@@ -86,10 +86,6 @@
 
 ;; 4b
 
-(define (pairs lst)
-  (cond ((null? lst) '())
-        (else (cons (list (car lst) (cadr lst)) (pairs (cddr lst))))))
-
 (define (in-range low high n)
   (cond ((not (<= low n high))  #f)
         (else #t)))
@@ -123,6 +119,10 @@
         (else #f)))
 
 (define (cid s) #t)
+
+(define (pairs lst)
+  (cond ((null? lst) '())
+        (else (cons (list (car lst) (cadr lst)) (pairs (cddr lst))))))
 
 (define (check-values lst)
   (foldl (lambda (n res) (and n res)) #t (map eval (pairs lst))))
