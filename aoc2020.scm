@@ -1,8 +1,7 @@
 ;; Advent of Code 2020
 ;; https://adventofcode.com/2020
 
-(import srfi-1)
-(import regex)
+(import srfi-1) ;; strings
 
 ;; 1a -- Day 1: Report Repair
 
@@ -72,6 +71,8 @@
 
 ;; 4a -- Day 4: Passport Processing
 
+(import regex)
+
 (define (check-keys x lst)
   (cond ((member x lst) #t)
         (else #f)))
@@ -129,3 +130,33 @@
 
 (length (filter (lambda (x) (check-values x)) 
   (filter (lambda (x) (has-keys x keys)) datas)))
+
+;; 5a -- Binary Boarding
+
+(import srfi-95) ;; sort 
+
+(define (first-half lst)
+  (take lst (quotient (length lst) 2)))
+(define (second-half lst)
+  (drop lst (quotient (length lst) 2)))
+
+(define (F lst) (second-half lst))
+(define (B lst) (first-half lst))
+(define (L lst) (second-half lst)
+(define (R lst) (first-half lst))
+
+(define (range n)
+  (cond ((< n 0) '())
+        (else (cons n (range (sub1 n))))))
+
+(define (seat lst)
+  (let ((column (car (foldl (lambda (res n) ((eval n) res)) (range 127) (take lst 7))))
+        (row (car (foldl (lambda (res n) ((eval n) res)) (range 7) (drop lst 7)))))
+    (+ (* column 8) row)))
+
+(car (sort (map seat datas) >))
+
+;; 5b
+
+(let ((data (map seat datas)))
+  (filter (lambda (x) (not (member x data))) (range 850)))
