@@ -160,3 +160,21 @@
 
 (let ((data (map seat datas)))
   (filter (lambda (x) (not (member x data))) (range 850)))
+  
+;; 6a -- Day 6: Custom Customs
+
+(import srfi-1)
+
+(fold + 0 (map (lambda (data)
+  (length (delete-duplicates (flatten data)))) datas))
+
+;; 6b
+
+(define (count-symbols lst s)
+  (length (filter (lambda (x) (eq? s x)) lst)))
+
+(define (count-unanimous lst)
+  (length (filter (lambda (x) (= (count-symbols (flatten lst) x) (length lst))) (delete-duplicates (flatten lst)))))
+
+(fold + 0 (map (lambda (data)
+  (count-unanimous data)) datas))
