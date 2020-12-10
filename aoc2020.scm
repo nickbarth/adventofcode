@@ -165,7 +165,7 @@
 
 (import srfi-1)
 
-(fold + 0 (map (lambda (data)
+(apply + (map (lambda (data)
   (length (delete-duplicates (flatten data)))) datas))
 
 ;; 6b
@@ -176,5 +176,5 @@
 (define (count-unanimous lst)
   (length (filter (lambda (x) (= (count-symbols (flatten lst) x) (length lst))) (delete-duplicates (flatten lst)))))
 
-(fold + 0 (map (lambda (data)
+(apply + (map (lambda (data)
   (count-unanimous data)) datas))
