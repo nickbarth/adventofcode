@@ -163,8 +163,6 @@
   
 ;; 6a -- Day 6: Custom Customs
 
-(import srfi-1)
-
 (apply + (map (lambda (data)
   (length (delete-duplicates (flatten data)))) datas))
 
@@ -178,3 +176,21 @@
 
 (apply + (map (lambda (data)
   (count-unanimous data)) datas))
+  
+;; 7a -- Day 7: Handy Haversacks
+
+(define (pairs lst)
+  (cond ((null? lst) '())
+        (else (cons (list (car lst) (cadr lst)) (pairs (cddr lst))))))
+
+(define (open-bag sym)
+   (cdr (car (filter (lambda (x) (equal? sym (car x))) datas))))
+
+(define (has-gold sym)
+  (let ((lst (open-bag sym)))
+    (cond ((null? lst) #f)
+          ((member 'shiny_gold lst) #t)
+          (else (not (null? (filter (lambda (x) (has-gold  (cadr x))) (pairs lst))))))))
+
+(length (filter has-gold (map car datas)))
+
