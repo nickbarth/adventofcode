@@ -194,3 +194,22 @@
 
 (length (filter has-gold (map car datas)))
 
+;; 7b
+
+(define (pairs lst)
+  (cond ((null? lst) '())
+        (else (cons (list (car lst) (cadr lst)) (pairs (cddr lst))))))
+
+(define (range n)
+  (cond ((< n 1) '())
+        (else (cons n (range (sub1 n))))))
+
+(define (expand-bag pair)
+  (map (lambda (x) (cadr pair)) (range (car pair))))
+
+(define (count-bags sum lst)
+  (if (null? lst) sum
+    (count-bags (+ sum (apply + (filter number? lst)))
+                (flatten (map open-bag (flatten (map expand-bag (pairs lst))))))))
+
+(count-bags 0 (open-bag 'shiny_gold))
