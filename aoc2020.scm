@@ -204,6 +204,9 @@
   (cond ((< n 1) '())
         (else (cons n (range (sub1 n))))))
 
+(define (open-bag sym)
+   (cdr (car (filter (lambda (x) (equal? sym (car x))) datas))))
+
 (define (expand-bag pair)
   (map (lambda (x) (cadr pair)) (range (car pair))))
 
