@@ -216,3 +216,16 @@
                 (flatten (map open-bag (flatten (map expand-bag (pairs lst))))))))
 
 (count-bags 0 (open-bag 'shiny_gold))
+  
+;; 8a -- Day 8: Handheld Halting
+
+(define (cycle sp a states)
+  (let ((instr (list-ref datas sp)))
+    (print (list sp instr a))
+    (if (not (member sp states))
+      (case (car instr)
+        ('nop (cycle (add1 sp) a (cons sp states)))
+        ('acc (cycle (add1 sp) (+ a (cadr instr)) (cons sp states)))
+        ('jmp (cycle (+ sp (cadr instr)) a (cons sp states))))
+      a)))
+(cycle 0 0 '())
