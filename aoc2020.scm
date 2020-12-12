@@ -229,3 +229,26 @@
         ('jmp (cycle (+ sp (cadr instr)) a (cons sp states))))
       a)))
 (cycle 0 0 '())
+  
+;; 8b
+  
+(define (find-indexes sym)
+  (let while ((n 0) (finds '()))
+    (if (< n (length mem))
+      (while (add1 n) (if (eq? (car (list-ref mem n)) sym) (cons n finds) finds))
+      finds)))
+
+(define (cycle nop sp a states)
+  (if (>= sp (length mem)) a
+    (let ((instr (list-ref mem sp)))
+      (if (not (member sp states))
+        (if (= nop sp)
+            (cycle nop (add1 sp) a (cons sp states))
+          (case (car instr)
+            ('nop (cycle nop (add1 sp) a (cons sp states)))
+            ('acc (cycle nop (add1 sp) (+ a (cadr instr)) (cons sp states)))
+            ('jmp (cycle nop (+ sp (cadr instr)) a (cons sp states)))))
+        #f))))
+
+(filter number?
+  (map (lambda (x) (cycle x 0 0 '())) (find-indexes 'jmp)))
