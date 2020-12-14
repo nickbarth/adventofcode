@@ -9,8 +9,6 @@
 
 ;; utility functions
 
-;; permutations
-
 (define (perm s)
   (cond ((null? s) '())
   ((null? (cdr s)) (list s))
@@ -21,14 +19,16 @@
         (if (null? r) '()
     (splice (cons m l) (car r) (cdr r))))))))
 
-;; combinations
-
 (define (comb m lst)
   (cond ((= m 0) '(()))
         ((null? lst) '())
         (else (append (map (lambda (y) (cons (car lst) y)) (comb (- m 1) (cdr lst)))
                       (comb m (cdr lst))))))
- 
+(define (range x)
+  (let loop ((y 0))
+    (if (= x y) '()
+    (cons y (loop (add1 y))))))
+
 ;; 1a -- Day 1: Report Repair
 
 (define (check n1 n2)
