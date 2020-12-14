@@ -1,10 +1,34 @@
 ;; Advent of Code 2020
 ;; https://adventofcode.com/2020
 
+;; imports
+
 (import srfi-1)  ; strings
 (import srfi-95) ; sort 
 (import regex)   ; regex
 
+;; utility functions
+
+;; permutations
+
+(define (perm s)
+  (cond ((null? s) '())
+  ((null? (cdr s)) (list s))
+  (else ;; extract each item in list in turn and perm the rest
+    (let splice ((l '()) (m (car s)) (r (cdr s)))
+      (append
+        (map (lambda (x) (cons m x)) (perm (append l r)))
+        (if (null? r) '()
+    (splice (cons m l) (car r) (cdr r))))))))
+
+;; combinations
+
+(define (comb m lst)
+  (cond ((= m 0) '(()))
+        ((null? lst) '())
+        (else (append (map (lambda (y) (cons (car lst) y)) (comb (- m 1) (cdr lst)))
+                      (comb m (cdr lst))))))
+ 
 ;; 1a -- Day 1: Report Repair
 
 (define (check n1 n2)
@@ -279,3 +303,14 @@
 
 (let ((range (sort (car (cdr (filter pair? (find-sum 14144619)))) <)))
   (+ (car range) (car (reverse range))))
+
+;; 10a -- Day 10: Adapter Array
+
+(define (check lst)
+  (let while ((n 0) (one 1) (three 1))
+    (if (< n (sub1 (length lst)))
+      (case (- (list-ref lst (add1 n)) (list-ref lst n))
+        ((1) (while (add1 n) (add1 one) three))
+        ((3) (while (add1 n) one (add1 three))))
+      (list one three))))
+(apply * (check (sort datas <)))
