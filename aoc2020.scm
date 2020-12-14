@@ -264,15 +264,18 @@
   
 ;; 9b
   
+(define (sum-check lst n)
+  (= (apply + lst) n))
+
 (define (check-range lst sum)
   (if (null? lst) '()
     (if (sum-check lst sum) lst
       (check-range (cdr lst) sum))))
 
-(define (check-all sum)
+(define (find-sum sum)
   (let while ((n (length datas)) (lst datas))
     (if (= n 0) '()
       (cons (check-range (take lst n) sum) (while (sub1 n) (take lst n))))))
 
-(let ((range (sort (car (cdr (filter pair? (check-all 14144619)))) <)))
+(let ((range (sort (car (cdr (filter pair? (find-sum 14144619)))) <)))
   (+ (car range) (car (reverse range))))
