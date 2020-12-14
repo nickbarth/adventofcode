@@ -1,7 +1,9 @@
 ;; Advent of Code 2020
 ;; https://adventofcode.com/2020
 
-(import srfi-1) ;; strings
+(import srfi-1)  ; strings
+(import srfi-95) ; sort 
+(import regex)   ; regex
 
 ;; 1a -- Day 1: Report Repair
 
@@ -71,8 +73,6 @@
 
 ;; 4a -- Day 4: Passport Processing
 
-(import regex)
-
 (define (check-keys x lst)
   (cond ((member x lst) #t)
         (else #f)))
@@ -132,8 +132,6 @@
   (filter (lambda (x) (has-keys x keys)) datas)))
 
 ;; 5a -- Binary Boarding
-
-(import srfi-95) ;; sort 
 
 (define (first-half lst)
   (take lst (quotient (length lst) 2)))
