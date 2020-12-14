@@ -261,3 +261,18 @@
           (while (add1 n))
           (list-ref datas n))))))
 (find-invalid 25)
+  
+;; 9b
+  
+(define (check-range lst sum)
+  (if (null? lst) '()
+    (if (sum-check lst sum) lst
+      (check-range (cdr lst) sum))))
+
+(define (check-all sum)
+  (let while ((n (length datas)) (lst datas))
+    (if (= n 0) '()
+      (cons (check-range (take lst n) sum) (while (sub1 n) (take lst n))))))
+
+(let ((range (sort (car (cdr (filter pair? (check-all 14144619)))) <)))
+  (+ (car range) (car (reverse range))))
