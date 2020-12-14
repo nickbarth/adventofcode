@@ -252,3 +252,14 @@
 
 (filter number?
   (map (lambda (x) (cycle x 0 0 '())) (find-indexes 'jmp)))
+
+;; 9a -- Day 9: Encoding Error
+
+(define (find-invalid preamble)
+  (let while ((n preamble))
+    (when (< n (length datas))
+      (let* ((prev (take (drop datas (- n preamble)) preamble)) (combs (comb 2 prev)))
+        (if (not (null? (filter (lambda (x) (= (+ (car x) (cadr x)) (list-ref datas n))) combs)))
+          (while (add1 n))
+          (list-ref datas n))))))
+(find-invalid 25)
