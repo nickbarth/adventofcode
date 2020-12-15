@@ -3,8 +3,8 @@
 
 ;; imports
 
-(import srfi-1)  ; strings
-(import srfi-95) ; sort 
+(import srfi-1)  ; list library
+(import srfi-95) ; sorting and merging 
 (import regex)   ; regex
 
 ;; utility functions
