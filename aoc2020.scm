@@ -314,3 +314,19 @@
         ((3) (while (add1 n) one (add1 three))))
       (list one three))))
 (apply * (check (sort datas <)))
+  
+;; 10
+  
+(define (index-in-range lst n)
+  (let ((val (list-ref lst n)))
+    (map (lambda (x) (+ x n)) (filter (lambda (x) 
+      (and (< (+ x n) (length lst)) 
+           (< val (list-ref lst (+ x n)) (+ val 4)))) 
+    '(1 2 3)))))
+
+(define (count-paths lst n)
+  (if (= n (sub1 (length lst))) 1 ;; end of path
+    (foldl (lambda (r x) (+ (mem-count lst x) r)) 0 (index-in-range lst n))))
+
+(define mem-count (memoize count-paths))
+(mem-count (sort datas <) 0)
