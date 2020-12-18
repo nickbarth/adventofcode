@@ -316,7 +316,7 @@
       (list one three))))
 (apply * (check (sort datas <)))
   
-;; 10
+;; 10b
   
 (define (index-in-range lst n)
   (let ((val (list-ref lst n)))
