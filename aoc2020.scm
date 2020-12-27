@@ -331,3 +331,44 @@
 
 (define mem-count (memoize count-paths))
 (mem-count (sort datas <) 0)
+
+;; 11a -- Day 11: Seating System
+
+(define data (map
+              (lambda (x) (string->list x))
+              (regexp-split #rx"\n" datas)))
+
+(define (seat lst y x)
+  (cond ((< y 0) '())
+        ((< x 0) '())
+        ((> y (sub1 (length lst))) '())
+        ((> x (sub1 (length (car lst)))) '())
+        (else (list-ref (list-ref lst y) x))))
+
+(define (surrounding y x)
+  (map (lambda (pos) (list (+ y (car pos)) (+ x (cadr pos))))
+       '((-1 -1) (-1 0) (-1 1) (0 -1) (0 1) (1 -1)  (1 0)  (1 1))))
+
+(define (adjacent lst y x)
+  (map (lambda (x) (apply seat lst x)) (surrounding y x)))
+
+(define (occupied lst)
+  (filter (lambda (x) (eq? #\# x)) lst))
+
+(define (advance lst y x)
+  (let ((cur (seat lst y x)) (adj (adjacent lst y x)))
+    (cond ((eq? #\. cur) #\.)
+          ((null? (occupied adj)) #\#)
+          ((> (length (occupied adj)) 3) #\L)
+          (else cur))))
+
+(define (step lst)
+  (reverse (let fory ((y 0) (board '()))
+    (if (> y (sub1 (length lst))) board
+        (let forx ((x 0) (row '()))
+          (if (> x (sub1 (length (car lst)))) (fory (add1 y) (cons (reverse row) board))
+              (forx (add1 x) (cons (advance lst y x) row))))))))
+
+(length (occupied (flatten (let while ((old-board (step data)))
+  (let ((board (step old-board)))
+    (if (equal? old-board board) board (while board)))))))
