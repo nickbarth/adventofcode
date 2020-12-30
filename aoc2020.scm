@@ -412,3 +412,63 @@
 (length (occupied (flatten (let while ((old-board (step data)))
   (let ((board (step old-board)))
     (if (equal? old-board board) board (while board)))))))
+
+;; 12a -- Day 12: Rain Risk
+
+(define data
+  (map (lambda (x) (list (string->symbol (car x)) (string->number (cadr x))))
+    (regexp-match* #rx"([A-Z])([0-9]+)?\n" datas #:match-select cdr)))
+
+(define (N units curdir y x)
+  (list curdir (+ y units) x))
+
+(define (S units curdir y x)
+  (list curdir (- y units) x))
+
+(define (E units curdir y x)
+  (list curdir y (+ x units)))
+
+(define (W units curdir y x)
+  (list curdir y (- x units)))
+
+(define (F units curdir y x)
+  (case curdir
+    ((N) (N units curdir y x))
+    ((S) (S units curdir y x))
+    ((E) (E units curdir y x))
+    ((W) (W units curdir y x))))
+
+(define (dir->angle dir)
+  (case dir
+    ((N) 0)
+    ((E) 90)
+    ((S) 180)
+    ((W) 270)))
+
+(define (angle->dir angle)
+  (case angle
+    ((0 360) 'N)
+    ((90 450) 'E)
+    ((180 -180 540) 'S)
+    ((270 -90 630) 'W)))
+
+(define (R units curdir y x)
+  (list (angle->dir (+ (dir->angle curdir) units)) y x))
+
+(define (L units curdir y x)
+  (list (angle->dir (- (dir->angle curdir) units)) y x))
+
+(define (move dir units curdir y x)
+  (case dir
+    ((N) (N units curdir y x))
+    ((S) (S units curdir y x))
+    ((E) (E units curdir y x))
+    ((W) (W units curdir y x))
+    ((L) (L units curdir y x))
+    ((R) (R units curdir y x))
+    ((F) (F units curdir y x))))
+
+(apply + (map abs (cdr (foldl (lambda (x r)
+         (let ((pos (apply move (append x r))))
+           (println (list x pos)) pos))
+       (list 'E 0 0) data))))
