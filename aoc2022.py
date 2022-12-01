@@ -1,7 +1,7 @@
 ### Utility
 import requests
 
-def get_input(session, year, day) -> str:
+def get_input(session:str, year:int, day:int) -> str:
     cookies:dict = {"session": session}
     request:Response = requests.get(f"https://adventofcode.com/{year}/day/{day}/input", cookies=cookies)
     return request.text
