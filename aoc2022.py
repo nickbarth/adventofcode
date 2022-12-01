@@ -1,15 +1,16 @@
 ### Utility
 import requests
 
-cookies = {"session": "xxx"}
-r = requests.get("https://adventofcode.com/xxxx/day/xx/input", cookies=cookies)
-data = r.text
+def get_input(session, year, day) -> str:
+    cookies:dict = {"session": session}
+    request:Response = requests.get(f"https://adventofcode.com/{year}/day/{day}/input", cookies=cookies)
+    return request.text
 
 ### Day1CalorieCounting
 from heapq import nlargest, heappush
 
 class Day1CalorieCounting(object):
-    def __init__(self, data):
+    def __init__(self, data:[str]):
         self.data:[int,None] = [x and int(x) or None for x in data.split("\n")]
 
     def part1(self) -> int:
