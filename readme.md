@@ -1,8 +1,8 @@
 ⭐🎄 Advent of Code Challenges 🎄⭐
 ====
 
-My solutions to the Advent of Code challenges (https://adventofcode.com/). 
+### My solutions to the [Advent of Code Challenges](https://adventofcode.com/).
 
-CC0 Public Domain
+### https://adventofcode.com/
 
-<img height="25" src="https://upload.wikimedia.org/wikipedia/commons/3/39/Cc-public_domain_mark_white.svg"> 
+###### CC0 Public Domain
