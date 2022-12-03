@@ -79,7 +79,7 @@ class Day3RucksackReorganization(object):
         self.data:[str] = data.strip().split("\n")
 
     def part1(self):
-        def find_common(compartment) -> int:
+        def find_common(compartment:[str]) -> int:
             half:int = int(len(compartment)/2)
             common = set(compartment[:half]) & set(compartment[half:])
             return self.priority_value(common.pop())
@@ -88,7 +88,7 @@ class Day3RucksackReorganization(object):
     def part2(self) -> int:
         triplets:[[str]] = [self.data[i:i+3]
                             for i in range(0, len(self.data), 3)]
-        def find_common(group:[int]) -> int:
+        def find_common(group:[str]) -> int:
             first:[str], second:[str], third:[str] = group
             common = set(first) & set(second) & set(third)
             return self.priority_value(common.pop())
