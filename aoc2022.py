@@ -86,10 +86,10 @@ class Day3RucksackReorganization(object):
         return sum(map(find_common, self.data))
 
     def part2(self) -> int:
-        triplets:[[int]] = [self.data[i:i+3]
+        triplets:[[str]] = [self.data[i:i+3]
                             for i in range(0, len(self.data), 3)]
         def find_common(group:[int]) -> int:
-            first, second, third = group
+            first:[str], second:[str], third:[str] = group
             common = set(first) & set(second) & set(third)
             return self.priority_value(common.pop())
         return sum(map(find_common, triplets))
