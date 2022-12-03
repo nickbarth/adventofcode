@@ -41,7 +41,7 @@ class Day1CalorieCounting(object):
         return sum(nlargest(3, heap))
 
 ### Day2RockPaperScissors
-    
+
 class Day2RockPaperScissors(object):
     def __init__(self, data:str):
         self.data:[[int]] = [x.split(" ") for x in data.strip().split("\n")]
@@ -71,3 +71,32 @@ class Day2RockPaperScissors(object):
             }
             return outcome[player2][player1]
         return sum([score(x,y) for x,y in self.data])
+
+### Day3RucksackReorganization
+
+class Day3RucksackReorganization(object):
+    def __init__(self, data:str):
+        self.data:[str] = data.strip().split("\n")
+
+    def part1(self):
+        def find_common(compartment) -> int:
+            half:int = int(len(compartment)/2)
+            common = set(compartment[:half]) & set(compartment[half:])
+            return self.priority_value(common.pop())
+        return sum(map(find_common, self.data))
+
+    def part2(self) -> int:
+        triplets:[[int]] = [self.data[i:i+3]
+                            for i in range(0, len(self.data), 3)]
+        def find_common(group:[int]) -> int:
+            first, second, third = group
+            common = set(first) & set(second) & set(third)
+            return self.priority_value(common.pop())
+        return sum(map(find_common, triplets))
+
+    @staticmethod
+    def priority_value(letter:str) -> int:
+        if letter.islower():
+            return ord(letter)-96
+        else:
+            return ord(letter)-38
