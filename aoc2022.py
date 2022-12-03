@@ -114,7 +114,7 @@ if __name__ == "__main__":
     print("[ Day 2 ]:")
     input:str="A Y\n" +\
               "B X\n" +\
-              "C Z"
+              "C Z\n"
     solution = Day2RockPaperScissors(input)
     assert solution.part1() == 15
     assert solution.part2() == 12
