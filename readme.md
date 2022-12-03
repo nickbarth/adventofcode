@@ -1,4 +1,4 @@
-Advent of Code Challenges
+⭐🎄 Advent of Code Challenges 🎄⭐
 ====
 
 My solutions to the Advent of Code challenges (https://adventofcode.com/). 
