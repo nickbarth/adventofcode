@@ -2,6 +2,8 @@
 ### ⭐🎄 Advent of Code 2022 🎄⭐ ###
 #####################################
 
+### types
+
 from typing import List, Dict, Optional, Set, Any, Tuple, cast
 
 ### utility
@@ -21,7 +23,7 @@ from heapq import nlargest, heappush
 
 class Day1CalorieCounting(object):
     def __init__(self, data:str):
-        self.data:List[Optional[int]] = [x and int(x) or None 
+        self.data:List[Optional[int]] = [x and int(x) or None
                                          for x in data.split("\n")]
 
     def part1(self) -> int:
@@ -49,19 +51,19 @@ class Day1CalorieCounting(object):
 if __name__ == "__main__":
     print("\n⭐🎄 AOC 2022 🎄⭐\n")
     print("[ Day 1 ]:")
-    input:str = "1000\n" +\
-                "2000\n" +\
-                "3000\n\n" +\
-                "4000\n\n" +\
-                "5000\n" +\
-                "6000\n\n" +\
-                "7000\n" +\
-                "8000\n" +\
-                "9000\n\n" +\
-                "10000\n"
-    solution = Day1CalorieCounting(input)
-    assert solution.part1() == 24000
-    assert solution.part2() == 45000
+    input1:str = "1000\n" +\
+                 "2000\n" +\
+                 "3000\n\n" +\
+                 "4000\n\n" +\
+                 "5000\n" +\
+                 "6000\n\n" +\
+                 "7000\n" +\
+                 "8000\n" +\
+                 "9000\n\n" +\
+                 "10000\n"
+    solution1 = Day1CalorieCounting(input1)
+    assert solution1.part1() == 24000
+    assert solution1.part2() == 45000
     print("✅ Part 1\n✅ Part 2\n")
 
 #####################################
@@ -112,12 +114,12 @@ class Day2RockPaperScissors(object):
 
 if __name__ == "__main__":
     print("[ Day 2 ]:")
-    input:str="A Y\n" +\
-              "B X\n" +\
-              "C Z\n"
-    solution = Day2RockPaperScissors(input)
-    assert solution.part1() == 15
-    assert solution.part2() == 12
+    input2:str = "A Y\n" +\
+                 "B X\n" +\
+                 "C Z\n"
+    solution2 = Day2RockPaperScissors(input2)
+    assert solution2.part1() == 15
+    assert solution2.part2() == 12
     print("✅ Part 1\n✅ Part 2\n")
 
 #####################################
@@ -153,13 +155,53 @@ class Day3RucksackReorganization(object):
 
 if __name__ == "__main__":
     print("[ Day 3 ]:")
-    input:str = "vJrwpWtwJgWrhcsFMMfFFhFp\n" +\
-                "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL\n" +\
-                "PmmdzqPrVvPwwTWBwg\n" +\
-                "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn\n" +\
-                "ttgJtRGJQctTZtZT\n" +\
-                "CrZsJsPPZsGzwwsLwLmpwMDw\n"
-    solution = Day3RucksackReorganization(input)
-    assert solution.part1() == 157
-    assert solution.part2() == 70
+    input3:str = "vJrwpWtwJgWrhcsFMMfFFhFp\n" +\
+                 "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL\n" +\
+                 "PmmdzqPrVvPwwTWBwg\n" +\
+                 "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn\n" +\
+                 "ttgJtRGJQctTZtZT\n" +\
+                 "CrZsJsPPZsGzwwsLwLmpwMDw\n"
+    solution3 = Day3RucksackReorganization(input3)
+    assert solution3.part1() == 157
+    assert solution3.part2() == 70
+    print("✅ Part 1\n✅ Part 2\n")
+
+
+#####################################
+### Day 4: Camp Cleanup
+#####################################
+
+import re
+
+class Day4CampCleanup(object):
+    def __init__(self, data:str):
+        self.data:List[str] = data.strip().split("\n")
+
+    def part1(self) -> int:
+        def overlaps(pair:str) -> int:
+            s1, e1, s2, e2 = cast(Tuple[int,int,int,int], map(int, re.findall(r"\d+", pair)))
+            set1:Set[int] = {*range(s1, e1+1)}
+            set2:Set[int] = {*range(s2, e2+1)}
+            return 1 if set1 & set2 in [set1, set2] else 0
+        return sum(map(overlaps, self.data))
+
+    def part2(self) -> int:
+        def overlaps(pair:str) -> int:
+            s1, e1, s2, e2 = cast(Tuple[int,int,int,int], map(int, re.findall(r"\d+", pair)))
+            set1:Set[int] = {*range(s1, e1+1)}
+            set2:Set[int] = {*range(s2, e2+1)}
+            return 1 if set1 & set2 else 0
+        return sum(map(overlaps, self.data))
+
+if __name__ == "__main__":
+    print("[ Day 4 ]:")
+    input4:str = "2-4,6-8\n" +\
+                 "2-3,4-5\n" +\
+                 "5-7,7-9\n" +\
+                 "2-8,3-7\n" +\
+                 "6-6,4-6\n" +\
+                 "2-6,4-8\n"
+    solution = Day4CampCleanup(input4)
+    assert solution.part1() == 2
+    assert solution.part2() == 4
     print("✅ Part 1\n✅ Part 2\n")
