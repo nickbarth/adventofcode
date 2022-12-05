@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# ./aoc2022.py and python3 -m mypy test.py --strict
 
 #####################################
 ### ⭐🎄 Advent of Code 2022 🎄⭐ ###
@@ -7,9 +8,6 @@
 ### types
 
 from typing import List, Dict, Optional, Set, Any, Tuple, cast
-
-# python3 -m mypy test.py --strict
-# python3 test.py
 
 ### utility
 
@@ -70,9 +68,8 @@ if __name__ == "__main__":
                  "9000\n\n" +\
                  "10000\n\n"
     solution1 = Day1CalorieCounting(input1)
-    assert solution1.part1() == 24000
-    assert solution1.part2() == 45000
-    print("✅ Part 1\n✅ Part 2\n")
+    assert solution1.part1() == 24000; print("✅ Part 1")
+    assert solution1.part2() == 45000; print("✅ Part 2\n")
 
 #####################################
 ### Day 2: Rock Paper Scissors
@@ -126,9 +123,8 @@ if __name__ == "__main__":
                  "B X\n" +\
                  "C Z\n"
     solution2 = Day2RockPaperScissors(input2)
-    assert solution2.part1() == 15
-    assert solution2.part2() == 12
-    print("✅ Part 1\n✅ Part 2\n")
+    assert solution2.part1() == 15; print("✅ Part 1")
+    assert solution2.part2() == 12; print("✅ Part 2\n")
 
 #####################################
 ### Day 3: Rucksack Reorganization
@@ -170,9 +166,8 @@ if __name__ == "__main__":
                  "ttgJtRGJQctTZtZT\n" +\
                  "CrZsJsPPZsGzwwsLwLmpwMDw\n"
     solution3 = Day3RucksackReorganization(input3)
-    assert solution3.part1() == 157
-    assert solution3.part2() == 70
-    print("✅ Part 1\n✅ Part 2\n")
+    assert solution3.part1() == 157; print("✅ Part 1")
+    assert solution3.part2() == 70;  print("✅ Part 2\n")
 
 
 #####################################
@@ -210,9 +205,8 @@ if __name__ == "__main__":
                  "6-6,4-6\n" +\
                  "2-6,4-8\n"
     solution = Day4CampCleanup(input4)
-    assert solution.part1() == 2
-    assert solution.part2() == 4
-    print("✅ Part 1\n✅ Part 2\n")
+    assert solution.part1() == 2; print("✅ Part 1")
+    assert solution.part2() == 4; print("✅ Part 2\n")
 
 #####################################
 ### Day 5: Supply Stacks
@@ -283,6 +277,5 @@ if __name__ == "__main__":
                 "move 1 from 1 to 2\n"
 
     solution5 = Day5SupplyStacks(input5)
-    assert solution5.part1() == "CMZ"
-    assert solution5.part2() == "MCD"
-    print("✅ Part 1\n✅ Part 2\n")
+    assert solution5.part1() == "CMZ"; print("✅ Part 1")
+    assert solution5.part2() == "MCD"; print("✅ Part 2\n")
