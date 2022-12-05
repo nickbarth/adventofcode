@@ -227,24 +227,20 @@ class Day5SupplyStacks(object):
         self.moves:List[List[int]] = []
         self.stacks:List[List[str]]
 
-        # parse rows
         for x in range(len(data)):
             if data[x]:
                 rows.append(data[x])
             else:
-                # reverse and eliminate blank
                 rows.pop()
                 rows.reverse()
                 break
 
-        # parse moves
         for y in range(x, len(data)):
             if data[y].strip():
                 numbers:List[str] = re.findall(r"\d+", data[y])
                 self.moves.append(list(map(int, numbers)))
 
-        crates:List[List[str]] = [re.findall(r"\[([A-Z])\]|\s{3}\s", x) for x in rows]
-        self.stacks = self.stackify(crates)
+        self.stacks = self.stackify([re.findall(r"\[([A-Z])\]|\s{3}\s", x) for x in rows])
 
     def part1(self) -> str:
         stacks:List[List[str]] = deepcopy(self.stacks)
@@ -252,7 +248,6 @@ class Day5SupplyStacks(object):
             for _ in range(count):
                 value:str = stacks[fstack-1].pop()
                 stacks[tstack-1].append(value)
-        # [print(x) for x in stacks] and print("\n")
         for move in self.moves:
             action(stacks, *move)
         return "".join([x[-1] for x in stacks])
@@ -260,16 +255,15 @@ class Day5SupplyStacks(object):
     def part2(self) -> str:
         stacks:List[List[str]] = deepcopy(self.stacks)
         def action(stacks:List[List[str]], count:int, fstack:int, tstack:int) -> None:
-            value:List[str] = [stacks[fstack-1].pop() for x in range(count)]
+            value:List[str] = [stacks[fstack-1].pop() for _ in range(count)]
             stacks[tstack-1] += reversed(value)
-        # [print(x) for x in stacks] and print("\n")
         for move in self.moves:
             action(stacks, *move)
         return "".join([x[-1] for x in stacks])
 
     @staticmethod
     def stackify(row:List[List[str]]) -> List[List[str]]:
-        stacks:List[List[str]] = [[] for x in range(len(row[0]))]
+        stacks:List[List[str]] = [[] for _ in range(len(row[0]))]
         for column in row:
             for index, value in enumerate(column):
                 if value:
