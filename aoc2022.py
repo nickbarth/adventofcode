@@ -246,8 +246,7 @@ class Day5SupplyStacks(object):
         stacks:List[List[str]] = deepcopy(self.stacks)
         def action(stacks:List[List[str]], count:int, fstack:int, tstack:int) -> None:
             for _ in range(count):
-                value:str = stacks[fstack-1].pop()
-                stacks[tstack-1].append(value)
+                stacks[tstack-1].append(stacks[fstack-1].pop())
         for move in self.moves:
             action(stacks, *move)
         return "".join([x[-1] for x in stacks])
