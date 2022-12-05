@@ -244,20 +244,20 @@ class Day5SupplyStacks(object):
 
     def part1(self) -> str:
         stacks:List[List[str]] = deepcopy(self.stacks)
-        def action(stacks:List[List[str]], count:int, fstack:int, tstack:int) -> None:
+        def move(stacks:List[List[str]], count:int, source:int, dest:int) -> None:
             for _ in range(count):
-                stacks[tstack-1].append(stacks[fstack-1].pop())
-        for move in self.moves:
-            action(stacks, *move)
+                stacks[dest-1].append(stacks[source-1].pop())
+        for count, source, dest in self.moves:
+            move(stacks, count, source, dest)
         return "".join([x[-1] for x in stacks])
 
     def part2(self) -> str:
         stacks:List[List[str]] = deepcopy(self.stacks)
-        def action(stacks:List[List[str]], count:int, fstack:int, tstack:int) -> None:
-            value:List[str] = [stacks[fstack-1].pop() for _ in range(count)]
-            stacks[tstack-1] += reversed(value)
-        for move in self.moves:
-            action(stacks, *move)
+        def move(stacks:List[List[str]], count:int, source:int, dest:int) -> None:
+            value:List[str] = [stacks[source-1].pop() for _ in range(count)]
+            stacks[dest-1] += reversed(value)
+        for count, source, dest in self.moves:
+            move(stacks, count, source, dest)
         return "".join([x[-1] for x in stacks])
 
     @staticmethod
