@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 #####################################
 ### ⭐🎄 Advent of Code 2022 🎄⭐ ###
 #####################################
@@ -5,6 +7,9 @@
 ### types
 
 from typing import List, Dict, Optional, Set, Any, Tuple, cast
+
+# python3 -m mypy test.py --strict
+# python3 test.py
 
 ### utility
 
@@ -15,6 +20,9 @@ def get_input(session:str, year:int, day:int) -> str:
     request = requests.get(f"https://adventofcode.com/{year}/day/{day}/input", cookies=cookies)
     return request.text
 
+SESSION = "53616c7465645f5f545dc9436abb85a184783ee33d8391474f7b739a28eb7ee243b959b671cd716cfc4896f00ae4c8191bf5229b79f5ae0bfa92f1af7e6b85ab"
+data5 = get_input(SESSION, 2022, 5)
+
 #####################################
 ### Day 1: Calorie Counting
 #####################################
@@ -24,7 +32,7 @@ from heapq import nlargest, heappush
 class Day1CalorieCounting(object):
     def __init__(self, data:str):
         self.data:List[Optional[int]] = [x and int(x) or None
-                                         for x in data.split("\n")]
+                                         for x in data.splitlines()]
 
     def part1(self) -> int:
         largest:int = -1
@@ -60,7 +68,7 @@ if __name__ == "__main__":
                  "7000\n" +\
                  "8000\n" +\
                  "9000\n\n" +\
-                 "10000\n"
+                 "10000\n\n"
     solution1 = Day1CalorieCounting(input1)
     assert solution1.part1() == 24000
     assert solution1.part2() == 45000
@@ -72,7 +80,7 @@ if __name__ == "__main__":
 
 class Day2RockPaperScissors(object):
     def __init__(self, data:str):
-        self.data = [x for x in data.strip().split("\n")]
+        self.data = [x for x in data.strip().splitlines()]
 
     def part1(self) -> int:
         def score(outcome:str) -> int:
@@ -128,7 +136,7 @@ if __name__ == "__main__":
 
 class Day3RucksackReorganization(object):
     def __init__(self, data:str):
-        self.data:List[str] = data.strip().split("\n")
+        self.data:List[str] = data.strip().splitlines()
 
     def part1(self) -> int:
         def find_common(compartment:List[str]) -> int:
@@ -175,7 +183,7 @@ import re
 
 class Day4CampCleanup(object):
     def __init__(self, data:str):
-        self.data:List[str] = data.strip().split("\n")
+        self.data:List[str] = data.strip().splitlines()
 
     def part1(self) -> int:
         def overlaps(pair:str) -> int:
@@ -204,4 +212,84 @@ if __name__ == "__main__":
     solution = Day4CampCleanup(input4)
     assert solution.part1() == 2
     assert solution.part2() == 4
+    print("✅ Part 1\n✅ Part 2\n")
+
+#####################################
+### Day 5: Supply Stacks
+#####################################
+
+from copy import deepcopy
+
+class Day5SupplyStacks(object):
+    def __init__(self, input:str):
+        data:List[str] = input.splitlines()
+        rows:List[str] = []
+        self.moves:List[List[int]] = []
+        self.stacks:List[List[str]]
+
+        # parse rows
+        for x in range(len(data)):
+            if data[x]:
+                rows.append(data[x])
+            else:
+                # reverse and eliminate blank
+                rows.pop()
+                rows.reverse()
+                break
+
+        # parse moves
+        for y in range(x, len(data)):
+            if data[y].strip():
+                numbers:List[str] = re.findall(r"\d+", data[y])
+                self.moves.append(list(map(int, numbers)))
+
+        crates:List[List[str]] = [re.findall(r"\[([A-Z])\]|\s{3}\s", x) for x in rows]
+        self.stacks = self.stackify(crates)
+
+    def part1(self) -> str:
+        stacks:List[List[str]] = deepcopy(self.stacks)
+        def action(stacks:List[List[str]], count:int, fstack:int, tstack:int) -> None:
+            for _ in range(count):
+                value:str = stacks[fstack-1].pop()
+                stacks[tstack-1].append(value)
+        # [print(x) for x in stacks] and print("\n")
+        for move in self.moves:
+            action(stacks, *move)
+        return "".join([x[-1] for x in stacks])
+
+    def part2(self) -> str:
+        stacks:List[List[str]] = deepcopy(self.stacks)
+        def action(stacks:List[List[str]], count:int, fstack:int, tstack:int) -> None:
+            value:List[str] = [stacks[fstack-1].pop() for x in range(count)]
+            stacks[tstack-1] += reversed(value)
+        # [print(x) for x in stacks] and print("\n")
+        for move in self.moves:
+            action(stacks, *move)
+        return "".join([x[-1] for x in stacks])
+
+    @staticmethod
+    def stackify(row:List[List[str]]) -> List[List[str]]:
+        stacks:List[List[str]] = [[] for x in range(len(row[0]))]
+        for column in row:
+            for index, value in enumerate(column):
+                if value:
+                    stacks[index].append(value)
+        return stacks
+
+
+if __name__ == "__main__":
+    print("[ Day 5 ]:")
+    input5:str= "    [D]    \n" +\
+                "[N] [C]    \n" +\
+                "[Z] [M] [P]\n" +\
+                " 1   2   3 \n" +\
+                "\n" +\
+                "move 1 from 2 to 1\n" +\
+                "move 3 from 1 to 3\n" +\
+                "move 2 from 2 to 1\n" +\
+                "move 1 from 1 to 2\n"
+
+    solution5 = Day5SupplyStacks(input5)
+    assert solution5.part1() == "CMZ"
+    assert solution5.part2() == "MCD"
     print("✅ Part 1\n✅ Part 2\n")
