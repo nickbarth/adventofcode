@@ -18,7 +18,7 @@ def get_input(session:str, year:int, day:int) -> str:
     request = requests.get(f"https://adventofcode.com/{year}/day/{day}/input", cookies=cookies)
     return request.text
 
-SESSION = "53616c7465645f5f545dc9436abb85a184783ee33d8391474f7b739a28eb7ee243b959b671cd716cfc4896f00ae4c8191bf5229b79f5ae0bfa92f1af7e6b85ab"
+SESSION = "xxx"
 data5 = get_input(SESSION, 2022, 5)
 
 #####################################
