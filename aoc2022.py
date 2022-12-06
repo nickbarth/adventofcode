@@ -18,7 +18,7 @@ def get_input(session:str, year:int, day:int) -> str:
     request = requests.get(f"https://adventofcode.com/{year}/day/{day}/input", cookies=cookies)
     return request.text
 
-SESSION = "xxx"
+SESSION = ""
 data5 = get_input(SESSION, 2022, 5)
 
 #####################################
@@ -221,17 +221,11 @@ class Day5SupplyStacks(object):
         self.moves:List[List[int]] = []
         self.stacks:List[List[str]]
 
-        for x in range(len(data)):
-            if data[x]:
-                rows.append(data[x])
-            else:
-                rows.pop()
-                rows.reverse()
-                break
-
-        for y in range(x, len(data)):
-            if data[y].strip():
-                numbers:List[str] = re.findall(r"\d+", data[y])
+        for line in data:
+            if "[" in line:
+                rows.insert(0,line)
+            elif line.startswith("move"):
+                numbers:List[str] = re.findall(r"\d+", line)
                 self.moves.append(list(map(int, numbers)))
 
         self.stacks = self.stackify([re.findall(r"\[([A-Z])\]|\s{3}\s", x) for x in rows])
@@ -277,5 +271,5 @@ if __name__ == "__main__":
                 "move 1 from 1 to 2\n"
 
     solution5 = Day5SupplyStacks(input5)
-    assert solution5.part1() == "CMZ"; print("✅ Part 1")
-    assert solution5.part2() == "MCD"; print("✅ Part 2\n")
+    assert solution5.part1() == "CMZ", "❌ Part 1"; print("✅ Part 1")
+    assert solution5.part2() == "MCD", "❌ Part 2"; print("✅ Part 2\n")
