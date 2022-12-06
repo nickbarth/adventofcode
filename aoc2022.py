@@ -283,16 +283,10 @@ class Day6TuningTrouble(object):
         self.data:str = data
 
     def find_window(self, minimum:int) -> int:
-        left = right = 0
-        window = set()
-        while right < len(self.data) and len(window) < minimum:
-            if self.data[right] not in window:
-                window.add(self.data[right])
-                right += 1
-            else:
-                window.remove(self.data[left])
-                left += 1
-        return right
+        for left in range(len(self.data)-minimum):
+            window = set(self.data[left:left+minimum])
+            if len(window) == minimum:
+                return left + minimum
 
     def part1(self) -> int:
         return self.find_window(4)
