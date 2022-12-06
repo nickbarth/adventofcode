@@ -19,7 +19,7 @@ def get_input(session:str, year:int, day:int) -> str:
     return request.text
 
 SESSION = ""
-data5 = get_input(SESSION, 2022, 5)
+data6 = get_input(SESSION, 2022, 6)
 
 #####################################
 ### Day 1: Calorie Counting
@@ -273,3 +273,36 @@ if __name__ == "__main__":
     solution5 = Day5SupplyStacks(input5)
     assert solution5.part1() == "CMZ", "❌ Part 1"; print("✅ Part 1")
     assert solution5.part2() == "MCD", "❌ Part 2"; print("✅ Part 2\n")
+
+#####################################
+### Day 6: Tuning Trouble
+#####################################
+
+class Day6TuningTrouble(object):
+    def __init__(self, data:str):
+        self.data:str = data
+
+    def find_window(self, minimum:int) -> int:
+        left = right = 0
+        window = set()
+        while right < len(self.data) and len(window) < minimum:
+            if self.data[right] not in window:
+                window.add(self.data[right])
+                right += 1
+            else:
+                window.remove(self.data[left])
+                left += 1
+        return right
+
+    def part1(self) -> int:
+        return self.find_window(4)
+
+    def part2(self) -> int:
+        return self.find_window(14)
+
+if __name__ == "__main__":
+    print("[ Day 6 ]:")
+    input6:str = "zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw"
+    solution6 = Day6TuningTrouble(input6)
+    assert solution6.part1() == 11, "❌ Part 1"; print("✅ Part 1")
+    assert solution6.part2() == 26, "❌ Part 2"; print("✅ Part 2\n")
