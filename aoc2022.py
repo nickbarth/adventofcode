@@ -68,8 +68,8 @@ if __name__ == "__main__":
                  "9000\n\n" +\
                  "10000\n\n"
     solution1 = Day1CalorieCounting(input1)
-    assert solution1.part1() == 24000; print("✅ Part 1")
-    assert solution1.part2() == 45000; print("✅ Part 2\n")
+    assert solution1.part1() == 24000, "❌ Part 1"; print("✅ Part 1")
+    assert solution1.part2() == 45000, "❌ Part 2"; print("✅ Part 2\n")
 
 #####################################
 ### Day 2: Rock Paper Scissors
@@ -123,8 +123,8 @@ if __name__ == "__main__":
                  "B X\n" +\
                  "C Z\n"
     solution2 = Day2RockPaperScissors(input2)
-    assert solution2.part1() == 15; print("✅ Part 1")
-    assert solution2.part2() == 12; print("✅ Part 2\n")
+    assert solution2.part1() == 15, "❌ Part 1"; print("✅ Part 1")
+    assert solution2.part2() == 12, "❌ Part 2"; print("✅ Part 2\n")
 
 #####################################
 ### Day 3: Rucksack Reorganization
@@ -166,8 +166,8 @@ if __name__ == "__main__":
                  "ttgJtRGJQctTZtZT\n" +\
                  "CrZsJsPPZsGzwwsLwLmpwMDw\n"
     solution3 = Day3RucksackReorganization(input3)
-    assert solution3.part1() == 157; print("✅ Part 1")
-    assert solution3.part2() == 70;  print("✅ Part 2\n")
+    assert solution3.part1() == 157, "❌ Part 1"; print("✅ Part 1")
+    assert solution3.part2() == 70,  "❌ Part 2"; print("✅ Part 2\n")
 
 
 #####################################
@@ -205,8 +205,8 @@ if __name__ == "__main__":
                  "6-6,4-6\n" +\
                  "2-6,4-8\n"
     solution = Day4CampCleanup(input4)
-    assert solution.part1() == 2; print("✅ Part 1")
-    assert solution.part2() == 4; print("✅ Part 2\n")
+    assert solution.part1() == 2, "❌ Part 1"; print("✅ Part 1")
+    assert solution.part2() == 4, "❌ Part 2"; print("✅ Part 2\n")
 
 #####################################
 ### Day 5: Supply Stacks
