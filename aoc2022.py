@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# ./aoc2022.py and python3 -m mypy aoc2022.py --strict
+# ./aoc2022.py && python3 -m mypy aoc2022.py --strict
 
 #####################################
 ### ⭐🎄 Advent of Code 2022 🎄⭐ ###
