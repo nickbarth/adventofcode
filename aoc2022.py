@@ -308,18 +308,18 @@ if __name__ == "__main__":
 
 from collections import deque
 
-class Node:
+class Folder:
     def __init__(self, name:str):
         self.name:str = name
         self.size:int = 0
-        self.parent:Optional[Node] = None
-        self.children:Dict[str,Node] = {}
+        self.parent:Optional[Folder] = None
+        self.children:Dict[str,Folder] = {}
 
 class Day7NoSpaceLeftOnDevice(object):
     def __init__(self, data:str):
-        self.root:Node = Node("root")
-        self.root.children["/"] = Node("/")
-        current:Optional[Node] = self.root
+        self.root:Folder = Folder("root")
+        self.root.children["/"] = Folder("/")
+        current:Optional[Folder] = self.root
         commands:deque[str] = deque(data.strip().splitlines())
         while commands and current:
             command:List[str] = commands.popleft().split(" ")
@@ -333,7 +333,7 @@ class Day7NoSpaceLeftOnDevice(object):
                     while commands and not commands[0].startswith("$"):
                         match commands.popleft().split(" "):
                             case ["dir", folder]:
-                                node:Node = Node(folder)
+                                node:Folder = Folder(folder)
                                 node.parent = current
                                 current.children[folder] = node
                             case [size, _]:
@@ -345,9 +345,9 @@ class Day7NoSpaceLeftOnDevice(object):
 
     def part1(self) -> int:
         total:int = 0
-        queue:deque[Node] = deque([self.root])
+        queue:deque[Folder] = deque([self.root])
         while len(queue) > 0:
-            node:Node = queue.popleft()
+            node:Folder = queue.popleft()
             if node.size < 100000:
                 total += node.size
             for child in node.children.values():
@@ -357,9 +357,9 @@ class Day7NoSpaceLeftOnDevice(object):
     def part2(self) -> int:
         required:int = 30000000 - (70000000 - self.root.children["/"].size)
         smallest:int = 70000000
-        queue:deque[Node] = deque([self.root])
+        queue:deque[Folder] = deque([self.root])
         while len(queue) > 0:
-            node:Node = queue.popleft()
+            node:Folder = queue.popleft()
             if node.size >= required and node.size < smallest:
                 smallest = node.size
             for child in node.children.values():
