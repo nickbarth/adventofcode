@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# ./aoc2022.py and python3 -m mypy test.py --strict
+# ./aoc2022.py and python3 -m mypy aoc2022.py --strict
 
 #####################################
 ### ⭐🎄 Advent of Code 2022 🎄⭐ ###
@@ -19,7 +19,7 @@ def get_input(session:str, year:int, day:int) -> str:
     return request.text
 
 SESSION = ""
-data6 = get_input(SESSION, 2022, 6)
+data7 = get_input(SESSION, 2022, 7)
 
 #####################################
 ### Day 1: Calorie Counting
@@ -287,6 +287,7 @@ class Day6TuningTrouble(object):
             window = set(self.data[left:left+minimum])
             if len(window) == minimum:
                 return left + minimum
+        return -1
 
     def part1(self) -> int:
         return self.find_window(4)
@@ -300,3 +301,96 @@ if __name__ == "__main__":
     solution6 = Day6TuningTrouble(input6)
     assert solution6.part1() == 11, "❌ Part 1"; print("✅ Part 1")
     assert solution6.part2() == 26, "❌ Part 2"; print("✅ Part 2\n")
+
+#####################################
+### Day 7: No Space Left On Device
+#####################################
+
+from collections import deque
+
+class Node:
+    def __init__(self, name:str):
+        self.name:str = name
+        self.size:int = 0
+        self.parent:Optional[Node] = None
+        self.children:Dict[str,Node] = {}
+
+class Day7NoSpaceLeftOnDevice(object):
+    def __init__(self, data:str):
+        self.root:Node = Node("root")
+        self.root.children["/"] = Node("/")
+        current:Optional[Node] = self.root
+        commands:deque[str] = deque(data.strip().splitlines())
+        while commands and current:
+            command:List[str] = commands.popleft().split(" ")
+            match command:
+                case ["$", "cd", folder]:
+                    if folder == "..":
+                        current = current.parent
+                    else:
+                        current = current.children[folder]
+                case ["$", "ls"]:
+                    while commands and not commands[0].startswith("$"):
+                        match commands.popleft().split(" "):
+                            case ["dir", folder]:
+                                node:Node = Node(folder)
+                                node.parent = current
+                                current.children[folder] = node
+                            case [size, _]:
+                                current.size += int(size)
+                                parent = current.parent
+                                while parent:
+                                    parent.size += int(size)
+                                    parent = parent.parent
+
+    def part1(self) -> int:
+        total:int = 0
+        queue:deque[Node] = deque([self.root])
+        while len(queue) > 0:
+            node:Node = queue.popleft()
+            if node.size < 100000:
+                total += node.size
+            for child in node.children.values():
+                queue.append(child)
+        return total
+
+    def part2(self) -> int:
+        required:int = 30000000 - (70000000 - self.root.children["/"].size)
+        smallest:int = 70000000
+        queue:deque[Node] = deque([self.root])
+        while len(queue) > 0:
+            node:Node = queue.popleft()
+            if node.size >= required and node.size < smallest:
+                smallest = node.size
+            for child in node.children.values():
+                queue.append(child)
+        return smallest
+
+if __name__ == "__main__":
+    print("[ Day 7 ]:")
+    input7:str = "$ cd /\n" +\
+                 "$ ls\n" +\
+                 "dir a\n" +\
+                 "14848514 b.txt\n" +\
+                 "8504156 c.dat\n" +\
+                 "dir d\n" +\
+                 "$ cd a\n" +\
+                 "$ ls\n" +\
+                 "dir e\n" +\
+                 "29116 f\n" +\
+                 "2557 g\n" +\
+                 "62596 h.lst\n" +\
+                 "$ cd e\n" +\
+                 "$ ls\n" +\
+                 "584 i\n" +\
+                 "$ cd ..\n" +\
+                 "$ cd ..\n" +\
+                 "$ cd d\n" +\
+                 "$ ls\n" +\
+                 "4060174 j\n" +\
+                 "8033020 d.log\n" +\
+                 "5626152 d.ext\n" +\
+                 "7214296 k\n"
+    solution7 = Day7NoSpaceLeftOnDevice(input7)
+    assert solution7.part1() == 95437,    "❌ Part 1"; print("✅ Part 1")
+    assert solution7.part2() == 24933642, "❌ Part 2"; print("✅ Part 2\n")
