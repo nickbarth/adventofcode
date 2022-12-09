@@ -480,24 +480,6 @@ class Day9RopeBridge(object):
         self.data:List[Tuple[str,int]]= [(x,int(y)) for x,y in \
                 [z.split() for z in data.strip().splitlines()]]
 
-    @staticmethod
-    def draw_graph(start:complex, rope:List[complex]) -> None:
-        for y in range(30):
-            for x in range(30):
-                curr = complex(x,y)
-                if curr in rope:
-                    if rope.index(curr) == 0:
-                        print("H", end="")
-                    else:
-                        print(rope.index(curr), end="")
-                elif curr == start:
-                    print("s", end="")
-                else:
-                    print(".", end="")
-            print()
-        print()
-        input()
-
     def part1(self, start:complex) -> int:
         head:complex = start
         tail:complex = start
@@ -567,6 +549,24 @@ class Day9RopeBridge(object):
                 moves.add(rope[9])
                 # self.draw_graph(start, rope)
         return len(moves)
+
+    @staticmethod
+    def draw_graph(start:complex, rope:List[complex]) -> None:
+        for y in range(30):
+            for x in range(30):
+                curr = complex(x,y)
+                if curr in rope:
+                    if rope.index(curr) == 0:
+                        print("H", end="")
+                    else:
+                        print(rope.index(curr), end="")
+                elif curr == start:
+                    print("s", end="")
+                else:
+                    print(".", end="")
+            print()
+        print()
+        input()
 
 if __name__ == "__main__":
     print("[ Day 9 ]:")
