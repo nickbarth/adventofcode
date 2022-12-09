@@ -19,7 +19,7 @@ def get_input(session:str, year:int, day:int) -> str:
     return request.text
 
 SESSION = ""
-data7 = get_input(SESSION, 2022, 7)
+data8 = get_input(SESSION, 2022, 8)
 
 #####################################
 ### Day 1: Calorie Counting
@@ -394,3 +394,79 @@ if __name__ == "__main__":
     solution7 = Day7NoSpaceLeftOnDevice(input7)
     assert solution7.part1() == 95437,    "❌ Part 1"; print("✅ Part 1")
     assert solution7.part2() == 24933642, "❌ Part 2"; print("✅ Part 2\n")
+
+#####################################
+### Day 8: Treetop Tree House
+#####################################
+
+class Day8TreetopTreeHouse(object):
+    def __init__(self, data: str):
+        self.data:List[List[int]] = [[int(x) for x in y] \
+            for y in data.strip().splitlines()]
+        self.length:int = len(self.data)
+        self.width:int = len(self.data[0])
+
+    def part1(self) -> int:
+        tallest:int
+        visible:Set[str] = set()
+        for y in range(self.length):
+            tallest = -1
+            for x in range(self.width):
+                if (height := self.data[y][x]) > tallest:
+                    visible.add(f"{x},{y}")
+                    tallest = height
+        for y in range(self.length):
+            tallest = -1
+            for x in range(self.width - 1, -1, -1):
+                if (height := self.data[y][x]) > tallest:
+                    visible.add(f"{x},{y}")
+                    tallest = height
+        for x in range(self.width):
+            tallest = -1
+            for y in range(self.length):
+                if (height := self.data[y][x]) > tallest:
+                    visible.add(f"{x},{y}")
+                    tallest = height
+        for x in range(self.width):
+            tallest = -1
+            for y in range(self.length - 1, -1, -1):
+                if (height := self.data[y][x]) > tallest:
+                    visible.add(f"{x},{y}")
+                    tallest = height
+        return len(visible)
+
+    def part2(self) -> int:
+        def get_score(x:int, y:int) -> int:
+            up = down = left = right = 0
+            size = self.data[y][x]
+            for i in range(x-1, -1, -1):
+                left += 1
+                if self.data[y][i] >= size:
+                    break
+            for i in range(x+1, self.length):
+                right += 1
+                if self.data[y][i] >= size:
+                    break
+            for i in range(y-1, -1, -1):
+                up += 1
+                if self.data[i][x] >= size:
+                    break
+            for i in range(y+1, self.width):
+                down += 1
+                if self.data[i][x] >= size:
+                    break
+            return up*left*down*right
+        return max(get_score(x, y) \
+                   for x in range(self.length) \
+                   for y in range(self.width))
+
+if __name__ == "__main__":
+    print("[ Day 8 ]:")
+    input8: str = "30373\n" +\
+                  "25512\n" +\
+                  "65332\n" +\
+                  "33549\n" +\
+                  "35390\n"
+    solution8 = Day8TreetopTreeHouse(input8)
+    assert solution8.part1() == 21, "❌ Part 1"; print("✅ Part 1")
+    assert solution8.part2() == 8,  "❌ Part 2"; print("✅ Part 2\n")
