@@ -19,7 +19,7 @@ def get_input(session:str, year:int, day:int) -> str:
     return request.text
 
 SESSION = ""
-data8 = get_input(SESSION, 2022, 8)
+data9 = get_input(SESSION, 2022, 9)
 
 #####################################
 ### Day 1: Calorie Counting
@@ -470,3 +470,115 @@ if __name__ == "__main__":
     solution8 = Day8TreetopTreeHouse(input8)
     assert solution8.part1() == 21, "❌ Part 1"; print("✅ Part 1")
     assert solution8.part2() == 8,  "❌ Part 2"; print("✅ Part 2\n")
+
+#####################################
+### Day 9: Rope Bridge
+#####################################
+
+class Day9RopeBridge(object):
+    def __init__(self, data: str):
+        self.data:List[Tuple[str,int]]= [(x,int(y)) for x,y in \
+                [z.split() for z in data.strip().splitlines()]]
+
+    @staticmethod
+    def draw_graph(start:complex, rope:List[complex]) -> None:
+        for y in range(30):
+            for x in range(30):
+                curr = complex(x,y)
+                if curr in rope:
+                    if rope.index(curr) == 0:
+                        print("H", end="")
+                    else:
+                        print(rope.index(curr), end="")
+                elif curr == start:
+                    print("s", end="")
+                else:
+                    print(".", end="")
+            print()
+        print()
+        input()
+
+    def part1(self, start:complex) -> int:
+        head:complex = start
+        tail:complex = start
+        moves:Set[complex] = set([start])
+
+        for move in self.data:
+            match move:
+                case ('U', units): movement = 0 + -1j
+                case ('D', units): movement = 0 + 1j
+                case ('L', units): movement = -1 + 0j
+                case ('R', units): movement = 1 + 0j
+            for _ in range(units):
+                prev = head
+                head += movement
+                distance = (head - tail)
+                if abs(distance.real) <= 1 and \
+                        abs(distance.imag) <= 1:
+                    continue
+                elif head.real == tail.real or \
+                     head.imag == tail.imag:
+                    tail += movement
+                else:
+                    tail = prev
+                moves.add(tail)
+        return len(moves)
+
+    def part2(self, start:complex) -> int:
+        rope:List[complex] = [start] * 10
+        moves:Set[complex] = set([start])
+        for direction, units in self.data:
+            match direction:
+                case 'U': movement = 0 + -1j
+                case 'D': movement = 0 + 1j
+                case 'L': movement = -1 + 0j
+                case 'R': movement = 1 + 0j
+            for _ in range(units):
+                # move head
+                rope[0] += movement
+                for i in range(1, len(rope)):
+                    head = rope[i-1]
+                    distance = (rope[i] - head)
+                    if abs(distance.real) <= 1 and abs(distance.imag) <= 1:
+                        continue
+                    # update the position
+                    if rope[i].real == head.real:
+                        # x == x | move vertically
+                        if rope[i].imag < head.imag:
+                            rope[i] += (0 + 1j)
+                        else:
+                            rope[i] -= (0 + 1j)
+                    elif rope[i].imag == head.imag:
+                        # x == x | move horizontally
+                        if rope[i].real < head.real:
+                            rope[i] += (1 + 0j)
+                        else:
+                            rope[i] -= (1 + 0j)
+                    else:
+                        # move diagonally
+                        if rope[i].real < head.real:
+                            rope[i] += (1 + 0j)
+                        else:
+                            rope[i] -= (1 + 0j)
+                        if rope[i].imag < head.imag:
+                            rope[i] += (0 + 1j)
+                        else:
+                            rope[i] -= (0 + 1j)
+                moves.add(rope[9])
+                # self.draw_graph(start, rope)
+        return len(moves)
+
+if __name__ == "__main__":
+    print("[ Day 9 ]:")
+    input9:str = "R 5\n" +\
+                 "U 8\n" +\
+                 "L 8\n" +\
+                 "D 3\n" +\
+                 "R 17\n" +\
+                 "D 10\n" +\
+                 "L 25\n" +\
+                 "U 20\n"
+
+    solution9 = Day9RopeBridge(input9)
+    assert solution9.part1(11 + 20j) == 88, "❌ Part 1"; print("✅ Part 1")
+    assert solution9.part2(11 + 15j) == 36, "❌ Part 2"; print("✅ Part 2\n")
