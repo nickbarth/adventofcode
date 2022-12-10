@@ -19,7 +19,7 @@ def get_input(session:str, year:int, day:int) -> str:
     return request.text
 
 SESSION = ""
-data9 = get_input(SESSION, 2022, 9)
+data10 = get_input(SESSION, 2022, 10)
 
 #####################################
 ### Day 1: Calorie Counting
@@ -582,3 +582,213 @@ if __name__ == "__main__":
     solution9 = Day9RopeBridge(input9)
     assert solution9.part1(11 + 20j) == 88, "❌ Part 1"; print("✅ Part 1")
     assert solution9.part2(11 + 15j) == 36, "❌ Part 2"; print("✅ Part 2\n")
+
+#####################################
+### Day 10: Cathode-Ray Tube
+#####################################
+
+class Day10CathodeRayTube(object):
+    def __init__(self, data: str):
+        self.commands = deque([x for x in \
+            [z.split() for z in data.strip().splitlines()]])
+
+    def process(self) -> Tuple[int, str]:
+        cursor:List[int] = [0,1,2]
+        screen:List[str] = ["#"]+["."]*239
+        signal:int = 0
+        cycle:int = 1
+        reg:Dict[str,int] = { "x": 1 }
+
+        def next_cycle() -> None:
+            nonlocal cycle, reg, screen, cursor, signal
+            if cycle in cursor:
+                screen[cycle] = "#"
+            cycle += 1
+            if cycle % 40 == 0:
+                cursor = [x + 40 for x in cursor]
+            if cycle in [20, 60, 100, 140, 180, 220]:
+                signal += cycle * reg["x"]
+
+        while self.commands:
+            op = self.commands.popleft()
+            match op:
+                case ["noop"]:
+                    next_cycle()
+                case ["addx", num]:
+                    next_cycle()
+                    reg["x"] += int(num)
+                    cursor = [x + int(num) for x in cursor]
+                    next_cycle()
+
+        return signal, "".join(screen)
+
+        def print_screen():
+            nonlocal cursor, screen, reg
+            print(cycle, reg)
+            for y in range(6):
+                for x in range(40):
+                    if (y*40)+x in cursor:
+                        print("X", end="")
+                    else:
+                        print(screen[(y*40)+x], end="")
+                print()
+
+if __name__ == "__main__":
+    print("[ Day 10 ]:")
+    input10:str = "addx 15\n" +\
+                  "addx -11\n" +\
+                  "addx 6\n" +\
+                  "addx -3\n" +\
+                  "addx 5\n" +\
+                  "addx -1\n" +\
+                  "addx -8\n" +\
+                  "addx 13\n" +\
+                  "addx 4\n" +\
+                  "noop\n" +\
+                  "addx -1\n" +\
+                  "addx 5\n" +\
+                  "addx -1\n" +\
+                  "addx 5\n" +\
+                  "addx -1\n" +\
+                  "addx 5\n" +\
+                  "addx -1\n" +\
+                  "addx 5\n" +\
+                  "addx -1\n" +\
+                  "addx -35\n" +\
+                  "addx 1\n" +\
+                  "addx 24\n" +\
+                  "addx -19\n" +\
+                  "addx 1\n" +\
+                  "addx 16\n" +\
+                  "addx -11\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "addx 21\n" +\
+                  "addx -15\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "addx -3\n" +\
+                  "addx 9\n" +\
+                  "addx 1\n" +\
+                  "addx -3\n" +\
+                  "addx 8\n" +\
+                  "addx 1\n" +\
+                  "addx 5\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "addx -36\n" +\
+                  "noop\n" +\
+                  "addx 1\n" +\
+                  "addx 7\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "addx 2\n" +\
+                  "addx 6\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "addx 1\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "addx 7\n" +\
+                  "addx 1\n" +\
+                  "noop\n" +\
+                  "addx -13\n" +\
+                  "addx 13\n" +\
+                  "addx 7\n" +\
+                  "noop\n" +\
+                  "addx 1\n" +\
+                  "addx -33\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "addx 2\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "addx 8\n" +\
+                  "noop\n" +\
+                  "addx -1\n" +\
+                  "addx 2\n" +\
+                  "addx 1\n" +\
+                  "noop\n" +\
+                  "addx 17\n" +\
+                  "addx -9\n" +\
+                  "addx 1\n" +\
+                  "addx 1\n" +\
+                  "addx -3\n" +\
+                  "addx 11\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "addx 1\n" +\
+                  "noop\n" +\
+                  "addx 1\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "addx -13\n" +\
+                  "addx -19\n" +\
+                  "addx 1\n" +\
+                  "addx 3\n" +\
+                  "addx 26\n" +\
+                  "addx -30\n" +\
+                  "addx 12\n" +\
+                  "addx -1\n" +\
+                  "addx 3\n" +\
+                  "addx 1\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "addx -9\n" +\
+                  "addx 18\n" +\
+                  "addx 1\n" +\
+                  "addx 2\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "addx 9\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "addx -1\n" +\
+                  "addx 2\n" +\
+                  "addx -37\n" +\
+                  "addx 1\n" +\
+                  "addx 3\n" +\
+                  "noop\n" +\
+                  "addx 15\n" +\
+                  "addx -21\n" +\
+                  "addx 22\n" +\
+                  "addx -6\n" +\
+                  "addx 1\n" +\
+                  "noop\n" +\
+                  "addx 2\n" +\
+                  "addx 1\n" +\
+                  "noop\n" +\
+                  "addx -10\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "addx 20\n" +\
+                  "addx 1\n" +\
+                  "addx 2\n" +\
+                  "addx 2\n" +\
+                  "addx -6\n" +\
+                  "addx -11\n" +\
+                  "noop\n" +\
+                  "noop\n" +\
+                  "noop\n"
+
+    solution10 = Day10CathodeRayTube(input10)
+    solution10_part1, solution10_part2 = solution10.process()
+    assert solution10_part1 == 13140, "❌ Part 1"; print("✅ Part 1")
+    screen_test = "##..##..##..##..##..##..##..##..##..##.." +\
+                  "###...###...###...###...###...###...###." +\
+                  "####....####....####....####....####...." +\
+                  "#####.....#####.....#####.....#####....." +\
+                  "######......######......######......####" +\
+                  "#######.......#######.......#######....."
+    assert solution10_part2 == screen_test, "❌ Part 2"; print("✅ Part 2\n")
