@@ -7,7 +7,7 @@
 
 ### types
 
-from typing import List, Dict, Optional, Set, Any, Tuple, cast
+from typing import List, Dict, Optional, Set, Any, Tuple, Iterator, cast
 
 ### utility
 
@@ -77,7 +77,7 @@ if __name__ == "__main__":
 
 class Day2RockPaperScissors(object):
     def __init__(self, data:str):
-        self.data = [x for x in data.strip().splitlines()]
+        self.data = data.strip().splitlines()
 
     def part1(self) -> int:
         def score(outcome:str) -> int:
@@ -792,3 +792,119 @@ if __name__ == "__main__":
                   "######......######......######......####" +\
                   "#######.......#######.......#######....."
     assert solution10_part2 == screen_test, "❌ Part 2"; print("✅ Part 2\n")
+
+#####################################
+### Day 11: Monkey in the Middle
+#####################################
+
+import re
+from collections import deque
+from functools import reduce
+from operator import mul
+
+class Monkey:
+    def __init__(self) -> None:
+        self.items:deque[int] = deque()
+        self.inspect_count:int = 0
+        self.op:List[str] = []
+        self.test:int = 0
+        self.pass_node:int = 0
+        self.fail_node:int = 0
+
+class Day11MonkeyInTheMiddle(object):
+    def __init__(self, text:str):
+        self.monkies = []
+
+        def readlines(data:str) -> Iterator[str]:
+            i = 0
+            lines = data.strip().splitlines()
+            while i < len(lines):
+                yield lines[i]
+                i += 1
+            yield None # type: ignore
+
+        lines = readlines(text)
+        while (line := next(lines)) != None:
+            if line.startswith("Monkey"):
+                monkey = Monkey()
+                monkey.items = deque(map(int, re.findall("\d{1,}", next(lines))))
+                monkey.op = re.search("Operation: new = (.*)", next(lines))[1].split(" ") # type: ignore
+                monkey.test = int(re.search("\d{1,}", next(lines))[0]) # type: ignore
+                monkey.pass_node = int(re.search("\d{1,}", next(lines))[0]) # type: ignore
+                monkey.fail_node = int(re.search("\d{1,}", next(lines))[0]) # type: ignore
+                self.monkies.append(monkey)
+
+    def part1(self) -> int:
+        monkies = deepcopy(self.monkies)
+        def process_monkey(monkey:Monkey) -> None:
+            while monkey.items:
+                new:int
+                old:int = monkey.items.popleft()
+                match monkey.op:
+                    case ["old", "*", "old"]: new = old * old
+                    case ["old", "*", num]:   new = old * int(num)
+                    case ["old", "+", num]:   new = old + int(num)
+                monkey.inspect_count += 1
+                new = new // 3
+                if new % monkey.test == 0:
+                    monkies[monkey.pass_node].items.append(new)
+                else:
+                    monkies[monkey.fail_node].items.append(new)
+        for _ in range(20):
+            for monkey in monkies:
+                process_monkey(monkey)
+        return reduce(mul, (sorted([monkey.inspect_count \
+            for monkey in monkies], reverse=True)[:2]))
+
+    def part2(self) -> int:
+        monkies = deepcopy(self.monkies)
+        def process_monkey(monkey:Monkey) -> None:
+            while monkey.items:
+                new:int
+                old:int = monkey.items.popleft()
+                match monkey.op:
+                    case ["old", "*", "old"]: new = old * old
+                    case ["old", "*", num]:   new = old * int(num)
+                    case ["old", "+", num]:   new = old + int(num)
+                monkey.inspect_count += 1
+                # new = new % 9699690
+                new = new % 96577
+                if new % monkey.test == 0:
+                    monkies[monkey.pass_node].items.append(new)
+                else:
+                    monkies[monkey.fail_node].items.append(new)
+        for _ in range(10000):
+            for monkey in monkies:
+                process_monkey(monkey)
+        return reduce(mul, (sorted([monkey.inspect_count \
+            for monkey in monkies], reverse=True)[:2]))
+
+if __name__ == "__main__":
+    print("[ Day 11 ]:")
+    input11 = "Monkey 0:\n" +\
+           "  Starting items: 79, 98\n" +\
+           "  Operation: new = old * 19\n" +\
+           "  Test: divisible by 23\n" +\
+           "    If true: throw to monkey 2\n" +\
+           "    If false: throw to monkey 3\n\n" +\
+           "Monkey 1:\n" +\
+           "  Starting items: 54, 65, 75, 74\n" +\
+           "  Operation: new = old + 6\n" +\
+           "  Test: divisible by 19\n" +\
+           "    If true: throw to monkey 2\n" +\
+           "    If false: throw to monkey 0\n\n" +\
+           "Monkey 2:\n" +\
+           "  Starting items: 79, 60, 97\n" +\
+           "  Operation: new = old * old\n" +\
+           "  Test: divisible by 13\n" +\
+           "    If true: throw to monkey 1\n" +\
+           "    If false: throw to monkey 3\n\n" +\
+           "Monkey 3:\n" +\
+           "  Starting items: 74\n" +\
+           "  Operation: new = old + 3\n" +\
+           "  Test: divisible by 17\n" +\
+           "    If true: throw to monkey 0\n" +\
+           "    If false: throw to monkey 1\n\n"
+    solution11 = Day11MonkeyInTheMiddle(input11)
+    assert solution11.part1() == 10605, "❌ Part 1"; print("✅ Part 1")
+    assert solution11.part2() == 2713310158, "❌ Part 2"; print("✅ Part 2\n")
