@@ -932,11 +932,9 @@ class Day12HillClimbingAlgorithm(object):
                     self.maze[y][x] = "{"
 
     def part1(self) -> int:
-        path:Dict[Tuple[int,int],Optional[Tuple[int,int]]] = {}
-        costs:Dict[Tuple[int,int],int] = {}
-        costs[self.start] = 0
+        path:Dict[Tuple[int,int],Optional[Tuple[int,int]]] = {self.start:None}
+        costs:Dict[Tuple[int,int],int] = {self.start: 0}
         queue:List[Tuple[int, Tuple[int,int]]] = [(0, self.start)]
-        path[self.start] = None
         while queue:
             cost, current = heappop(queue)
             x, y = current
@@ -955,11 +953,8 @@ class Day12HillClimbingAlgorithm(object):
 
     def part2(self) -> int:
         self.start, self.end = self.end, self.start
-        path:Dict[Tuple[int,int],Optional[Tuple[int,int]]] = {}
-        costs:Dict[Tuple[int,int],int] = {}
-        costs[self.start] = 0
+        costs:Dict[Tuple[int,int],int] = {self.start: 0}
         queue:List[Tuple[int, Tuple[int,int]]] = [(0, self.start)]
-        path[self.start] = None
         while queue:
             cost, current = heappop(queue)
             x, y = current
@@ -975,7 +970,6 @@ class Day12HillClimbingAlgorithm(object):
                     continue
                 heappush(queue, (cost + 1, (mx, my)))
                 costs[(mx, my)] = cost + 1
-                path[(mx, my)] = current
         return -1
 
 if __name__ == "__main__":
