@@ -953,23 +953,22 @@ class Day12HillClimbingAlgorithm(object):
 
     def part2(self) -> int:
         self.start, self.end = self.end, self.start
-        costs:Dict[Tuple[int,int],int] = {self.start: 0}
-        queue:List[Tuple[int, Tuple[int,int]]] = [(0, self.start)]
+        visited:Set[Tuple[int,int]] = set()
+        queue:deque[Tuple[Tuple[int,int], int]] = deque([(self.start, 0)])
         while queue:
-            cost, current = heappop(queue)
-            x, y = current
+            [x, y], steps = queue.popleft()
             if self.maze[y][x] == 'a':
-                return costs[(x,y)]
+                return steps
             for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]:
                 mx, my = x + dx, y + dy
                 if not (0 <= mx < self.width and 0 <= my < self.height):
                     continue
-                if (mx, my) in costs:
+                if (mx, my) in visited:
                     continue
                 if ord(self.maze[y][x]) - ord(self.maze[my][mx]) > 1:
                     continue
-                heappush(queue, (cost + 1, (mx, my)))
-                costs[(mx, my)] = cost + 1
+                queue.append(((mx, my), steps + 1))
+                visited.add((mx, my))
         return -1
 
 if __name__ == "__main__":
