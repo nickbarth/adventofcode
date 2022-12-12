@@ -19,7 +19,7 @@ def get_input(session:str, year:int, day:int) -> str:
     return request.text
 
 SESSION = ""
-data10 = get_input(SESSION, 2022, 10)
+data12 = get_input(SESSION, 2022, 12)
 
 #####################################
 ### Day 1: Calorie Counting
@@ -909,3 +909,82 @@ if __name__ == "__main__":
     solution11 = Day11MonkeyInTheMiddle(input11)
     assert solution11.part1() == 10605, "❌ Part 1"; print("✅ Part 1")
     assert solution11.part2() == 2713310158, "❌ Part 2"; print("✅ Part 2\n")
+
+#####################################
+### Day 12: Hill Climbing Algorithm
+#####################################
+
+from heapq import heappop, heappush
+
+class Day12HillClimbingAlgorithm(object):
+    def __init__(self, data:str):
+        self.maze = [[*x] for x in data.strip().splitlines()]
+        self.height, self.width = len(self.maze), len(self.maze[0])
+        self.start = self.end = (0,0)
+
+        for y in range(self.height):
+            for x in range(self.width):
+                if self.maze[y][x] == "S":
+                    self.start = (x,y)
+                    self.maze[y][x] = "a"
+                if self.maze[y][x] == "E":
+                    self.end = (x,y)
+                    self.maze[y][x] = "{"
+
+    def part1(self) -> int:
+        path:Dict[Tuple[int,int],Optional[Tuple[int,int]]] = {}
+        costs:Dict[Tuple[int,int],int] = {}
+        costs[self.start] = 0
+        queue:List[Tuple[int, Tuple[int,int]]] = [(0, self.start)]
+        path[self.start] = None
+        while queue:
+            cost, current = heappop(queue)
+            x, y = current
+            for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]:
+                mx, my = x + dx, y + dy
+                if not (0 <= mx < self.width and 0 <= my < self.height):
+                    continue
+                if (mx, my) in costs:
+                    continue
+                if ord(self.maze[my][mx]) - ord(self.maze[y][x]) > 1:
+                    continue
+                heappush(queue, (cost + 1, (mx, my)))
+                costs[(mx, my)] = cost + 1
+                path[(mx, my)] = current
+        return costs[self.end]
+
+    def part2(self) -> int:
+        self.start, self.end = self.end, self.start
+        path:Dict[Tuple[int,int],Optional[Tuple[int,int]]] = {}
+        costs:Dict[Tuple[int,int],int] = {}
+        costs[self.start] = 0
+        queue:List[Tuple[int, Tuple[int,int]]] = [(0, self.start)]
+        path[self.start] = None
+        while queue:
+            cost, current = heappop(queue)
+            x, y = current
+            if self.maze[y][x] == 'a':
+                return costs[(x,y)]
+            for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]:
+                mx, my = x + dx, y + dy
+                if not (0 <= mx < self.width and 0 <= my < self.height):
+                    continue
+                if (mx, my) in costs:
+                    continue
+                if ord(self.maze[y][x]) - ord(self.maze[my][mx]) > 1:
+                    continue
+                heappush(queue, (cost + 1, (mx, my)))
+                costs[(mx, my)] = cost + 1
+                path[(mx, my)] = current
+        return -1
+
+if __name__ == "__main__":
+    print("[ Day 12 ]:")
+    input12:str = "Sabqponm\n" +\
+                  "abcryxxl\n" +\
+                  "accszExk\n" +\
+                  "acctuvwj\n" +\
+                  "abdefghi\n"
+    solution12 = Day12HillClimbingAlgorithm(input12)
+    assert solution12.part1() == 31, "❌ Part 1"; print("✅ Part 1")
+    assert solution12.part2() == 29, "❌ Part 2"; print("✅ Part 2\n")
