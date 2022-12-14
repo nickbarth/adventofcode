@@ -11,6 +11,7 @@ from typing import List, Dict, Optional, Set, Any, Tuple, Iterator, cast
 
 ### utility
 
+from os import system
 import requests
 
 def get_input(session:str, year:int, day:int) -> str:
@@ -19,7 +20,7 @@ def get_input(session:str, year:int, day:int) -> str:
     return request.text
 
 SESSION = ""
-data12 = get_input(SESSION, 2022, 12)
+data13 = get_input(SESSION, 2022, 13)
 
 #####################################
 ### Day 1: Calorie Counting
@@ -981,3 +982,93 @@ if __name__ == "__main__":
     solution12 = Day12HillClimbingAlgorithm(input12)
     assert solution12.part1() == 31, "❌ Part 1"; print("✅ Part 1")
     assert solution12.part2() == 29, "❌ Part 2"; print("✅ Part 2\n")
+
+#####################################
+### Day 13: Distress Signal
+#####################################
+
+from functools import cmp_to_key
+from collections import deque
+
+class Day13DistressSignal(object):
+    def __init__(self, text:str):
+        self.data = [eval(x) for x in text.strip().splitlines() if x != ""]
+
+    def part1(self) -> int:
+        it = iter(self.data)
+        pairs = list(zip(it, it))
+        score = 0
+        index = 0
+        for l1, l2 in pairs:
+            index += 1
+            if compare := self.compare_lists(l1, l2):
+                score += index
+        return score
+
+    def part2(self):
+        self.data += [[[2]]]
+        self.data += [[[6]]]
+
+        def sort_lists(l1, l2):
+            result = self.compare_lists(l1, l2)
+            if result == None: return -1
+            elif result: return -1
+            else: return 1
+
+        self.data = sorted(self.data, key=cmp_to_key(sort_lists))
+        return (self.data.index([[2]]) + 1) * \
+            (self.data.index([[6]]) + 1)
+
+    def compare_lists(self, l1, l2) -> bool:
+        list1, list2 = deque(l1), deque(l2)
+        while list1 and list2:
+            item1 = list1.popleft()
+            item2 = list2.popleft()
+            match item1, item2:
+                case int(),  int():
+                    if item1 == item2:
+                        continue
+                    return item1 < item2
+                case list(), list():
+                    result = self.compare_lists(item1, item2)
+                    if result is None:
+                        continue
+                    return result
+                case int(),  list():
+                    result = self.compare_lists([item1], item2)
+                    if result is None:
+                        continue
+                    return result
+                case list(), int():
+                    result = self.compare_lists(item1, [item2])
+                    if result is None:
+                        continue
+                    return result
+        if not list1 and list2:
+            return True
+        if list1 and not list2:
+            return False
+        return None
+
+
+if __name__ == "__main__":
+    print("[ Day 13 ]:")
+    input13:str = "[1,1,3,1,1]\n" +\
+                  "[1,1,5,1,1]\n\n" +\
+                  "[[1],[2,3,4]]\n" +\
+                  "[[1],4]\n\n" +\
+                  "[9]\n" +\
+                  "[[8,7,6]]\n\n" +\
+                  "[[4,4],4,4]\n" +\
+                  "[[4,4],4,4,4]\n\n" +\
+                  "[7,7,7,7]\n" +\
+                  "[7,7,7]\n\n" +\
+                  "[]\n" +\
+                  "[3]\n\n" +\
+                  "[[[]]]\n" +\
+                  "[[]]\n\n" +\
+                  "[1,[2,[3,[4,[5,6,7]]]],8,9]\n" +\
+                  "[1,[2,[3,[4,[5,6,0]]]],8,9]\n\n"
+    solution13 = Day13DistressSignal(input13)
+    assert solution13.part1() == 13,  "❌ Part 1"; print("✅ Part 1")
+    assert solution13.part2() == 140, "❌ Part 2"; print("✅ Part 2\n")
