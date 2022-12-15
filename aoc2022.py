@@ -11,8 +11,9 @@ from typing import List, Dict, Optional, Set, Any, Tuple, Iterator, cast
 
 ### utility
 
-from os import system
 import requests
+from os import system
+from time import sleep
 
 def get_input(session:str, year:int, day:int) -> str:
     cookies:Dict[str,str] = {"session": session}
@@ -20,7 +21,7 @@ def get_input(session:str, year:int, day:int) -> str:
     return request.text
 
 SESSION = ""
-data13 = get_input(SESSION, 2022, 13)
+data14 = get_input(SESSION, 2022, 14)
 
 #####################################
 ### Day 1: Calorie Counting
@@ -1005,11 +1006,11 @@ class Day13DistressSignal(object):
                 score += index
         return score
 
-    def part2(self):
+    def part2(self) -> int:
         self.data += [[[2]]]
         self.data += [[[6]]]
 
-        def sort_lists(l1, l2):
+        def sort_lists(l1:List[int], l2:List[int]) -> int:
             result = self.compare_lists(l1, l2)
             if result == None: return -1
             elif result: return -1
@@ -1019,7 +1020,7 @@ class Day13DistressSignal(object):
         return (self.data.index([[2]]) + 1) * \
             (self.data.index([[6]]) + 1)
 
-    def compare_lists(self, l1, l2) -> bool:
+    def compare_lists(self, l1:List[int], l2:List[int]) -> Optional[bool]:
         list1, list2 = deque(l1), deque(l2)
         while list1 and list2:
             item1 = list1.popleft()
@@ -1072,3 +1073,89 @@ if __name__ == "__main__":
     solution13 = Day13DistressSignal(input13)
     assert solution13.part1() == 13,  "❌ Part 1"; print("✅ Part 1")
     assert solution13.part2() == 140, "❌ Part 2"; print("✅ Part 2\n")
+
+#####################################
+### Day 14: Regolith Reservoir
+#####################################
+
+import re
+
+class Day14RegolithReservoir(object):
+    def __init__(self, text:str):
+        self.sand:Set[Tuple[int,int]] = set()
+        self.ground:Set[Tuple[int,int]]  = set()
+        self.has_floor:bool = False
+        self.start:Tuple[int,int] = (500, 0)
+
+        # parse
+        data = text.strip().splitlines()
+        paths = [[list(map(int,y.split(","))) for y in
+          re.findall("\d+,\d+", x)] for x in data]
+
+        # get width and height
+        flatten = [x for sub in paths for x in sub]
+        xs, ys = list(zip(*flatten))
+        xs = sorted([*xs]) # type:ignore
+        ys = sorted([*ys]) # type:ignore
+        self.height, self.width = ys[-1] + 2, xs[-1] + 2
+
+        # add paths
+        for lines in paths:
+            x1, y1 = lines.pop(0)
+            self.ground.add((x1,y1))
+            while lines:
+                x2, y2 = lines.pop(0)
+                while x1 != x2 or y1 != y2:
+                    if   x1 < x2: x1 += 1
+                    elif x1 > x2: x1 -= 1
+                    elif y1 < y2: y1 += 1
+                    elif y1 > y2: y1 -= 1
+                    self.ground.add((x1,y1))
+
+    def is_falling(self, x:int, y:int) -> bool:
+        if self.has_floor:
+            return (y != self.height) and \
+                   (x, y) not in self.ground and \
+                   (x, y) not in self.sand
+        return (x, y) not in self.ground and \
+               (x, y) not in self.sand
+
+    def count_sand(self, has_floor:bool) -> int:
+        x, y = self.start
+        self.sand = set()
+        self.has_floor = has_floor
+
+        while True:
+            if not has_floor and y == self.height:
+                return len(self.sand) # part 1
+            elif self.is_falling(x,  y+1): y += 1
+            elif self.is_falling(x-1,y+1): x, y = x-1, y+1
+            elif self.is_falling(x+1,y+1): x, y = x+1, y+1
+            elif (x, y) == self.start:
+                return len(self.sand) + 1 # part 2
+            else:
+                self.sand.add((x, y))
+                x, y = self.start
+
+    def part1(self) -> int:
+        return self.count_sand(False)
+
+    def part2(self) -> int:
+        return self.count_sand(True)
+
+    def draw_cave(self) -> None:
+        for y in range(40, 49):
+            for x in range(518, 600):
+                if (x,y) in self.ground: print("#", end="")
+                elif (x,y) in self.sand: print("o", end="")
+                else: print(".", end="")
+            print()
+        input()
+
+if __name__ == "__main__":
+    print("[ Day 14 ]:")
+    input14 = "498,4 -> 498,6 -> 496,6\n" +\
+              "503,4 -> 502,4 -> 502,9 -> 494,9"
+    solution14 = Day14RegolithReservoir(input14)
+    assert solution14.part1() == 24, "❌ Part 1"; print("✅ Part 1")
+    assert solution14.part2() == 93, "❌ Part 2"; print("✅ Part 2\n")
