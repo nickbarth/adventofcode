@@ -14,6 +14,7 @@ from typing import List, Dict, Optional, Set, Any, Tuple, Iterator, cast
 import requests
 from os import system
 from time import sleep
+from datetime import datetime
 
 def get_input(session:str, year:int, day:int) -> str:
     cookies:Dict[str,str] = {"session": session}
@@ -21,7 +22,7 @@ def get_input(session:str, year:int, day:int) -> str:
     return request.text
 
 SESSION = ""
-data14 = get_input(SESSION, 2022, 14)
+data15 = get_input(SESSION, 2022, 15)
 
 #####################################
 ### Day 1: Calorie Counting
@@ -1159,3 +1160,114 @@ if __name__ == "__main__":
     solution14 = Day14RegolithReservoir(input14)
     assert solution14.part1() == 24, "❌ Part 1"; print("✅ Part 1")
     assert solution14.part2() == 93, "❌ Part 2"; print("✅ Part 2\n")
+
+#####################################
+### Day 15: Beacon Exclusion Zone
+#####################################
+
+import re
+
+class Day15BeaconExclusionZone(object):
+    def __init__(self, text:str):
+        self.sensors = []
+        self.beacons = []
+        self.distances = []
+
+        # parse input
+        data = text.strip().splitlines()
+        pairs = [[tuple(map(int,y)) \
+          for y in re.findall("(\-?\d+), y=(\-?\d+)", x)] \
+          for x in data]
+
+        # get sensors and beacons
+        for sensor, beacon in pairs:
+            self.sensors.append(sensor)
+            self.beacons.append(beacon)
+            x1, y1 = sensor
+            x2, y2 = beacon
+            self.distances.append(abs(x1 - x2) + abs(y1 - y2))
+
+        # find x,y min and max
+        x_ranges = []
+        y_ranges = []
+        for i, beacon in enumerate(self.beacons):
+            x, y = beacon
+            x_ranges.append(x + self.distances[i])
+            x_ranges.append(x - self.distances[i])
+            y_ranges.append(y + self.distances[i])
+            y_ranges.append(y - self.distances[i])
+
+        x_ranges.sort()
+        y_ranges.sort()
+
+        self.xmin, self.xmax = x_ranges[0], x_ranges[-1]
+        self.ymin, self.ymax = y_ranges[0], y_ranges[-1]
+
+    def part1(self) -> int:
+        count = 0
+        y1 = 10
+        for x1 in range(self.xmin, self.xmax):
+            if (x1, y1) in self.beacons or \
+               (x1, y1) in self.sensors:
+                continue
+            for i, (x2, y2) in enumerate(self.sensors):
+                distance = abs(x1 - x2) + abs(y1 - y2)
+                if distance <= self.distances[i]:
+                    count += 1
+                    break
+        return count
+
+    def part2(self) -> int:
+        points = set()
+        intersecs = set()
+
+        def add_point(x:int, y:int) -> None:
+            if 0 <= x < 20 and 0 <= y <= 20:
+                if (x,y) in points:
+                    intersecs.add((x, y))
+                else:
+                    points.add((x, y))
+
+        for i, sensor in enumerate(self.sensors):
+            print(" > sensor", i)
+            x, y = sensor
+            d = self.distances[i] + 1
+            for i in range(0, d+1):
+                add_point(x+d-i, y+i)
+                add_point(x+d-i, y-i)
+                add_point(x-d+i, y+i)
+                add_point(x-d+i, y-i)
+
+        for i, sensor in enumerate(self.sensors):
+            print(" > sensor", i)
+            x1, y1 = sensor
+            remove = set()
+            for x2, y2 in intersecs:
+                distance = abs(x1 - x2) + abs(y1 - y2)
+                if distance <= self.distances[i]:
+                    remove.add((x2, y2))
+            for point in remove:
+                intersecs.remove(point)
+
+        x, y = intersecs.pop() or (0,0)
+        return (x * 4000000) + y
+
+if __name__ == "__main__":
+    print("[ Day 15 ]:")
+    input15:str = "Sensor at x=2, y=18: closest is at x=-2, y=15\n" +\
+                  "Sensor at x=9, y=16: closest beacon is at x=10, y=16\n" +\
+                  "Sensor at x=13, y=2: closest beacon is at x=15, y=3\n" +\
+                  "Sensor at x=12, y=14: beacon is at x=10, y=16\n" +\
+                  "Sensor at x=10, y=20: closest beacon is at x=10, y=16\n" +\
+                  "Sensor at x=14, y=17: closest beacon is at x=10, y=16\n" +\
+                  "Sensor at x=8, y=7: closest beacon is at x=2, y=10\n" +\
+                  "Sensor at x=2, y=0: closest beacon is at x=2, y=10\n" +\
+                  "Sensor at x=0, y=11: closest beacon is at x=2, y=10\n" +\
+                  "Sensor at x=20, y=14: closest beacon is at x=25, y=17\n" +\
+                  "Sensor at x=17, y=20: closest beacon is at x=21, y=22\n" +\
+                  "Sensor at x=16, y=7: closest beacon is at x=15, y=3\n" +\
+                  "Sensor at x=14, y=3: closest beacon is at x=15, y=3\n" +\
+                  "Sensor at x=20, y=1: closest beacon is at x=15, y=3\n"
+    solution15 = Day15BeaconExclusionZone(input15)
+    assert solution15.part1() == 26, "❌ Part 1"; print("✅ Part 1")
+    assert solution15.part2() == 56000011, "❌ Part 2"; print("✅ Part 2\n")
