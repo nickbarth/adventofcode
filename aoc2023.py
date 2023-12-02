@@ -93,6 +93,6 @@ def Day2Part2():
             for ball in balls:
                 [amount, color] = ball.split(" ")
                 counts[color] = max(counts[color], int(amount))
-        total += counts['red'] * counts['green'] * counts['blue']
+        total += counts["red"] * counts["green"] * counts["blue"]
     return total
 assert Day2Part2() == 2286, "❌"; print(" ⭐\n")
