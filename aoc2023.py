@@ -58,23 +58,22 @@ assert Day1Part2() == 281, "❌"; print(" ⭐\n")
 
 print("🎄 Day 2:", end="")
 
+
 def Day2Part1():
     data = "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green\n" +\
            "Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue\n" +\
            "Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red\n" +\
            "Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red\n" +\
            "Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green"
-    data = data.splitlines()
     total = 0
-    for game in data:
+    for game in re.finditer(r'Game (\d+): (.+)', data):
         counts = defaultdict(int)
-        rounds = [x.split(", ") for x in game.split(": ")[1].split("; ")]
-        for balls in rounds:
-            for ball in balls:
-                [amount, color] = ball.split(" ")
-                counts[color] = max(counts[color], int(amount))
+        number, rounds = game.groups()
+        balls = re.findall(r'(\d+) (\w+)', rounds)
+        for amount, color in balls:
+            counts[color] = max(counts[color], int(amount))
         if counts["red"] <= 12 and counts["green"] <= 13 and counts["blue"] <= 14:
-            total += int(game.split(": ")[0].split(" ")[1])
+            total += int(number)
     return total
 assert Day2Part1() == 8, "❌"; print(" ⭐", end="")
 
@@ -84,15 +83,13 @@ def Day2Part2():
            "Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red\n" +\
            "Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red\n" +\
            "Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green"
-    data = data.splitlines()
     total = 0
-    for game in data:
+    for game in re.finditer(r'Game (\d+): (.+)', data):
         counts = defaultdict(int)
-        rounds = [x.split(", ") for x in game.split(": ")[1].split("; ")]
-        for balls in rounds:
-            for ball in balls:
-                [amount, color] = ball.split(" ")
-                counts[color] = max(counts[color], int(amount))
-        total += counts["red"] * counts["green"] * counts["blue"]
+        number, rounds = game.groups()
+        balls = re.findall(r'(\d+) (\w+)', rounds)
+        for amount, color in balls:
+            counts[color] = max(counts[color], int(amount))
+        total += counts['red'] * counts['green'] * counts['blue']
     return total
 assert Day2Part2() == 2286, "❌"; print(" ⭐\n")
