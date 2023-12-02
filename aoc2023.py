@@ -68,8 +68,8 @@ def Day2Part1():
     for game in re.finditer(r'Game (\d+): (.+)', data):
         counts = defaultdict(int)
         number, rounds = game.groups()
-        balls = re.findall(r'(\d+) (\w+)', rounds)
-        for amount, color in balls:
+        cubes = re.findall(r'(\d+) (\w+)', rounds)
+        for amount, color in cubes:
             counts[color] = max(counts[color], int(amount))
         if counts["red"] <= 12 and counts["green"] <= 13 and counts["blue"] <= 14:
             total += int(number)
@@ -86,8 +86,8 @@ def Day2Part2():
     for game in re.finditer(r'Game (\d+): (.+)', data):
         counts = defaultdict(int)
         number, rounds = game.groups()
-        balls = re.findall(r'(\d+) (\w+)', rounds)
-        for amount, color in balls:
+        cubes = re.findall(r'(\d+) (\w+)', rounds)
+        for amount, color in cubes:
             counts[color] = max(counts[color], int(amount))
         total += counts['red'] * counts['green'] * counts['blue']
     return total
