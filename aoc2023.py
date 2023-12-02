@@ -43,16 +43,43 @@ def Day1Part2():
            "4nineeightseven2\n" +\
            "zoneight234\n" +\
            "7pqrstsixteen"
+    DIGITS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
     total = 0
-    digits = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
-    newlines = []
+    forward_trie = {}
+    backward_trie = {}
+    def add_word(trie, word):
+        curr = trie
+        for c in word:
+            curr = curr.setdefault(c, {})
+        curr["*"] = "*"
+    def search_word(trie, word):
+        digit = ""
+        curr = trie
+        for c in word:
+            digit += c
+            if c not in curr:
+                return False
+            curr = curr[c]
+            if "*" in curr:
+                return digit
+        return digit if "*" in curr else False
+    def get_first(line, trie, reverse=False):
+        for i, c in enumerate(line):
+            if c.isdigit():
+                return int(c)
+            if digit := search_word(trie, line[i:]):
+                if not reverse:
+                    return DIGITS.index(digit) 
+                else:
+                    return DIGITS.index(digit[::-1])
+        return None
+    for digit in DIGITS:
+        add_word(forward_trie, digit)
+        add_word(backward_trie, digit[::-1])
     for line in data.splitlines():
-        for digit in digits:
-            line = line.replace(digit, digit[0] + str(digits.index(digit)) + digit[-1])
-        newlines.append(line)
-    for line in newlines:
-        num = re.sub(r"[a-z]", "", line)
-        total += int(f"{num[0]}{num[-1]}") if num else 0
+        first_digit = get_first(line, forward_trie)
+        last_digit = get_first(line[::-1], backward_trie, True)
+        total += first_digit * 10 + last_digit
     return total
 assert Day1Part2() == 281, "❌"; print(" ⭐\n")
 
