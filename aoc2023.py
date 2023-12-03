@@ -119,3 +119,75 @@ def Day2Part2():
         total += counts['red'] * counts['green'] * counts['blue']
     return total
 assert Day2Part2() == 2286, "❌"; print(" ⭐\n")
+
+print("🎄 Day 3:", end="")
+
+data = "467..114..\n" +\
+       "...*......\n" +\
+       "..35..633.\n" +\
+       "......#...\n" +\
+       "617*......\n" +\
+       ".....+.58.\n" +\
+       "..592.....\n" +\
+       "......755.\n" +\
+       "...$.*....\n" +\
+       ".664.598.."
+
+def Day3Part1(data):
+    total = 0
+    lines = data.splitlines()
+    width, height = len(lines[0]), len(lines)
+    grid = [list(line) for line in lines]
+    def is_valid(y, x):
+        def is_touching(dy, dx):
+            ny, nx = y + dy, x + dx
+            return 0 <= ny < height and 0 <= nx < width \
+                and grid[ny][nx] not in '.0123456789'
+        adjacent = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+        return any(is_touching(dy, dx) for dy, dx in adjacent)
+    for y in range(height):
+        number, valid = "", False
+        for x in range(width):
+            char = grid[y][x]
+            if char.isdigit():
+                valid |= is_valid(y, x)
+                number += char
+            else:
+                if number and valid:
+                    total += int(number)
+                number, valid = "", False
+        if number and valid:
+            total += int(number)
+    return total
+assert Day3Part1(data) == 4361, "❌"; print(" ⭐", end="")
+
+def Day3Part2(data):
+    total = 0
+    valid_numbers = defaultdict(list)
+    lines = data.splitlines()
+    width, height = len(lines[0]), len(lines)
+    grid = [list(line) for line in lines]
+    def get_star(y, x):
+        def is_touching(dy, dx):
+            ny, nx = y + dy, x + dx
+            if 0 <= ny < height and 0 <= nx < width and grid[ny][nx] == '*':
+                return (ny, nx)
+            return None
+        adjacent = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+        position = [is_touching(dy, dx) for dy, dx in adjacent]
+        return next(iter([x for x in position if x is not None]), None)
+    for y in range(height):
+        number, valid = "", False
+        for x in range(width):
+            char = grid[y][x]
+            if char.isdigit():
+                valid = valid or get_star(y, x)
+                number += char
+            else:
+                if number and valid:
+                    valid_numbers[valid].append(number)
+                number, valid = "", False
+        if number and valid:
+            valid_numbers[valid].append(number)
+    return sum(int(x[0]) * int(x[1]) for x in valid_numbers.values() if len(x) == 2)
+assert Day3Part2(data) == 467835, "❌"; print(" ⭐\n")
