@@ -210,8 +210,7 @@ def Day4Part1(data):
     lines = data.splitlines()
     total = 0
     for line in lines:
-        lotto = line.split(":")[1].strip()
-        winners, picks = lotto.split("|")
+        winners, picks = line.split(":")[1].strip().split("|")
         winners = list(map(int, winners.split()))
         picks = list(map(int, picks.split()))
         winning_picks = set(winners) & set(picks)
@@ -226,8 +225,7 @@ def Day4Part2(data):
     count = defaultdict(int)
     for index, line in enumerate(lines):
         count[index] += 1
-        lotto = line.split(":")[1].strip()
-        winners, picks = lotto.split("|")
+        winners, picks = line.split(":")[1].strip().split("|")
         winners = list(map(int, winners.split()))
         picks = list(map(int, picks.split()))
         winning_picks = set(winners) & set(picks)
