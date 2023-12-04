@@ -23,26 +23,28 @@ data = get_input(SESSION, 2023, 1)
 
 print("Day 1:", end="")
 
-def Day1Part1():
-    data = "1abc2\n" +\
-           "pqr3stu8vwx\n" +\
-           "a1b2c3d4e5f\n"+\
-           "treb7uchet\n"
+data = "1abc2\n" +\
+       "pqr3stu8vwx\n" +\
+       "a1b2c3d4e5f\n"+\
+       "treb7uchet\n"
+
+def Day1Part1(data):
     total = 0
     for num in data.splitlines():
         num = re.sub(r"[a-z]", "", num)
         total += int(f"{num[0]}{num[-1]}") if num else 0
     return total
-assert Day1Part1() == 142, "❌"; print(" ⭐", end="")
+assert Day1Part1(data) == 142, "❌"; print(" ⭐", end="")
 
-def Day1Part2():
-    data = "two1nine\n" +\
-           "eightwothree\n" +\
-           "abcone2threexyz\n" +\
-           "xtwone3four\n" +\
-           "4nineeightseven2\n" +\
-           "zoneight234\n" +\
-           "7pqrstsixteen"
+data = "two1nine\n" +\
+       "eightwothree\n" +\
+       "abcone2threexyz\n" +\
+       "xtwone3four\n" +\
+       "4nineeightseven2\n" +\
+       "zoneight234\n" +\
+       "7pqrstsixteen"
+
+def Day1Part2(data):
     DIGITS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
     total = 0
     forward_trie = {}
@@ -81,16 +83,17 @@ def Day1Part2():
         last_digit = get_first(line[::-1], backward_trie, True)
         total += first_digit * 10 + last_digit
     return total
-assert Day1Part2() == 281, "❌"; print(" ⭐\n")
+assert Day1Part2(data) == 281, "❌"; print(" ⭐\n")
 
 print("🎄 Day 2:", end="")
 
-def Day2Part1():
-    data = "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green\n" +\
-           "Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue\n" +\
-           "Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red\n" +\
-           "Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red\n" +\
-           "Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green"
+data = "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green\n" +\
+       "Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue\n" +\
+       "Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red\n" +\
+       "Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red\n" +\
+       "Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green"
+
+def Day2Part1(data):
     total = 0
     for game in re.finditer(r'Game (\d+): (.+)', data):
         counts = defaultdict(int)
@@ -101,14 +104,15 @@ def Day2Part1():
         if counts["red"] <= 12 and counts["green"] <= 13 and counts["blue"] <= 14:
             total += int(number)
     return total
-assert Day2Part1() == 8, "❌"; print(" ⭐", end="")
+assert Day2Part1(data) == 8, "❌"; print(" ⭐", end="")
 
-def Day2Part2():
-    data = "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green\n" +\
-           "Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue\n" +\
-           "Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red\n" +\
-           "Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red\n" +\
-           "Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green"
+data = "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green\n" +\
+       "Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue\n" +\
+       "Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red\n" +\
+       "Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red\n" +\
+       "Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green"
+
+def Day2Part2(data):
     total = 0
     for game in re.finditer(r'Game (\d+): (.+)', data):
         counts = defaultdict(int)
@@ -118,7 +122,7 @@ def Day2Part2():
             counts[color] = max(counts[color], int(amount))
         total += counts['red'] * counts['green'] * counts['blue']
     return total
-assert Day2Part2() == 2286, "❌"; print(" ⭐\n")
+assert Day2Part2(data) == 2286, "❌"; print(" ⭐\n")
 
 print("🎄 Day 3:", end="")
 
