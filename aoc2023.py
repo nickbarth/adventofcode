@@ -235,3 +235,19 @@ def Day4Part2(data):
             count[i] += count[index]
     return sum(count.values())
 assert Day4Part2(data) == 30, "❌"; print(" ⭐\n")
+
+print("🎄 Day 6:", end="")
+
+def Day6():
+    def get_wins(time, distance):
+        count = 0
+        for v in range(time):
+            traveled = v * (time - v)
+            if traveled > distance:
+                count += 1
+        return count
+    p1 = get_wins(7, 9) * get_wins(15, 40) * get_wins(30, 200)
+    p2 = get_wins(71530, 940200)
+    assert p1 == 288, "❌"; print(" ⭐", end="")
+    assert p2 == 71503 , "❌"; print(" ⭐\n")
+Day6()
