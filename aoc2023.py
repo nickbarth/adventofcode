@@ -251,3 +251,39 @@ def Day6():
     assert p1 == 288, "❌"; print(" ⭐", end="")
     assert p2 == 71503 , "❌"; print(" ⭐\n")
 Day6()
+
+print("🎄 Day 9:", end="")
+
+data = """
+0 3 6 9 12 15
+1 3 6 10 15 21
+10 13 16 21 30 45
+"""
+def Day9():
+    def solve(data, reverse=False):
+        lines = data.strip().split("\n")
+        lines = [line.strip().split(" ") for line in lines]
+        if reverse:
+            nums = [list(reversed([int(num) for num in line])) for line in lines]
+        else:
+            nums = [[int(num) for num in line] for line in lines]
+        def step(nums):
+            new_nums = []
+            for i in range(1, len(nums)):
+                new_nums.append(nums[i] - nums[i-1])
+            return new_nums
+        grand_total = 0
+        addition = []
+        totals = defaultdict(int)
+        for i, curr in enumerate(nums):
+            totals[i] += curr[-1]
+            while sum(curr) != 0:
+                curr = step(curr)
+                total = sum(curr)
+                totals[i] += curr[-1]
+        return sum(totals.values())
+    p1 = solve(data)
+    p2 = solve(data, reverse=True)
+    assert p1 == 114, "❌"; print(" ⭐", end="")
+    assert p2 == 2 , "❌"; print(" ⭐\n")
+Day9()
