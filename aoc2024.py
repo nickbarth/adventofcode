@@ -167,7 +167,6 @@ def Day4(data):
                     if (y+1, x+1) in crosses:
                         gold += 1
                     crosses.add((y+1, x+1))
-    print(silver, gold)
     return (silver, gold)
 print("Day 4:", end="")
 data = """
