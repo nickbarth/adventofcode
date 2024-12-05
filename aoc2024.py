@@ -105,7 +105,6 @@ def Day3(data):
                 x = x * 10 + int(s[j])
                 j += 1
             if s[j] != ",":
-                i += 1
                 continue
             j += 1
             while s[j].isdigit():
@@ -122,3 +121,60 @@ xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))
 """
 print("Day 3:", end="")
 assert Day3(data) == (161,48), "❌"; print(" ⭐ ⭐")
+
+def Day4(data):
+    silver = gold = 0
+    grid = [list(x) for x in data.strip().splitlines()]
+    cols = len(grid[0])
+    rows = len(grid)
+    @cache
+    def find(y, x, i, dy, dx):
+        word = ["X", "M", "A", "S"]
+        ny, nx = y + dy, x + dx
+        if not (0 <= ny < rows and 0 <= nx < cols):
+            return 0
+        if grid[ny][nx] != word[i]:
+            return 0
+        if word[i] == "S":
+            return 1
+        return find(ny, nx, i + 1, dy, dx)
+    crosses = defaultdict(set)
+    for y in range(rows):
+        for x in range(cols):
+            if grid[y][x] == "X":
+                silver += find(y, x, 1, -1, -1) # NW
+                silver += find(y, x, 1, -1,  0) # N
+                silver += find(y, x, 1, -1,  1) # NE
+                silver += find(y, x, 1,  0, -1) # W
+                silver += find(y, x, 1,  1, -1) # SW
+                silver += find(y, x, 1,  1,  0) # S
+                silver += find(y, x, 1,  1,  1) # SE
+                silver += find(y, x, 1,  0,  1) # E
+            elif grid[y][x] == "M":
+                if find(y, x, 2, -1, -1): # NW
+                    crosses[(y-1, x-1)].add("NW")
+                if find(y, x, 2, -1,  1): # NE
+                    crosses[(y-1, x+1)].add("NE")
+                if find(y, x, 2,  1, -1): # SW
+                    crosses[(y+1, x-1)].add("SW")
+                if find(y, x, 2,  1,  1): # SE
+                    crosses[(y+1, x+1)].add("SE")
+    for (y, x), values in crosses.items():
+        if len(values) == 2:
+            gold += 1
+    print(silver, gold)
+    return (silver, gold)
+print("Day 4:", end="")
+data = """
+MMMSXXMASM
+MSAMXMSMSA
+AMXSXMAAMM
+MSAMASMSMX
+XMASAMXAMM
+XXAMMXXAMA
+SMSMSASXSS
+SAXAMASAAA
+MAMMMXMMMM
+MXMXAXMASX
+"""
+assert Day4(data1) == (18,9), "❌"; print(" ⭐ ⭐")
