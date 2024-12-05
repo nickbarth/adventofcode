@@ -127,6 +127,7 @@ def Day4(data):
     grid = [list(x) for x in data.strip().splitlines()]
     cols = len(grid[0])
     rows = len(grid)
+    crosses = set()
     @cache
     def find(y, x, i, dy, dx):
         word = ["X", "M", "A", "S"]
@@ -138,7 +139,6 @@ def Day4(data):
         if word[i] == "S":
             return 1
         return find(ny, nx, i + 1, dy, dx)
-    crosses = defaultdict(set)
     for y in range(rows):
         for x in range(cols):
             if grid[y][x] == "X":
@@ -152,16 +152,21 @@ def Day4(data):
                 silver += find(y, x, 1,  0,  1) # E
             elif grid[y][x] == "M":
                 if find(y, x, 2, -1, -1): # NW
-                    crosses[(y-1, x-1)].add("NW")
+                    if (y-1, x-1) in crosses:
+                        gold += 1
+                    crosses.add((y-1, x-1))
                 if find(y, x, 2, -1,  1): # NE
-                    crosses[(y-1, x+1)].add("NE")
+                    if (y-1, x+1) in crosses:
+                        gold += 1
+                    crosses.add((y-1, x+1))
                 if find(y, x, 2,  1, -1): # SW
-                    crosses[(y+1, x-1)].add("SW")
+                    if (y+1, x-1) in crosses:
+                        gold += 1
+                    crosses.add((y+1, x-1))
                 if find(y, x, 2,  1,  1): # SE
-                    crosses[(y+1, x+1)].add("SE")
-    for (y, x), values in crosses.items():
-        if len(values) == 2:
-            gold += 1
+                    if (y+1, x+1) in crosses:
+                        gold += 1
+                    crosses.add((y+1, x+1))
     print(silver, gold)
     return (silver, gold)
 print("Day 4:", end="")
