@@ -168,7 +168,6 @@ def Day4(data):
                         gold += 1
                     crosses.add((y+1, x+1))
     return (silver, gold)
-print("Day 4:", end="")
 data = """
 MMMSXXMASM
 MSAMXMSMSA
@@ -181,4 +180,74 @@ SAXAMASAAA
 MAMMMXMMMM
 MXMXAXMASX
 """
-assert Day4(data1) == (18,9), "❌"; print(" ⭐ ⭐")
+print("Day 4:", end="")
+assert Day4(data) == (18,9), "❌"; print(" ⭐ ⭐")
+
+
+def Day5(data):
+    silver = gold = 0
+    rules = [list(map(int, x.split("|"))) for x in data.strip().splitlines() if x.count("|") == 1]
+    lines = [list(map(int, x.split(","))) for x in data.strip().splitlines() if x.count(",") != 0]
+    adj = defaultdict(set)
+    for a, b in rules:
+        adj[b].add(a)
+    def toposort(pages):
+        page_set = set(pages)
+        result = []
+        visited = set()
+        visiting = set()
+        def visit(n):
+            if n in visiting:
+                return  # cycle
+            if n in visited:
+                return
+            visiting.add(n)
+            for m in adj[n]:
+                if m in page_set:
+                    visit(m)
+            visited.add(n)
+            visiting.remove(n)
+            result.append(n)
+        for page in pages:
+            if page not in visited:
+                visit(page)
+        return result
+    for pages in lines:
+        ordered = toposort(pages)
+        if ordered == pages:
+            silver += ordered[len(ordered) // 2]
+        else:
+            gold += ordered[len(ordered) // 2]
+    return (silver, gold)
+data = """
+47|53
+97|13
+97|61
+97|47
+75|29
+61|13
+75|53
+29|13
+97|29
+53|29
+61|53
+97|53
+61|29
+47|13
+75|47
+97|75
+47|61
+75|61
+47|29
+75|13
+53|13
+75,47,61,53,29
+97,61,53,29,13
+75,29,13
+75,97,47,61,53
+61,13,29
+97,13,75,29,47
+"""
+print("Day 5:", end="")
+assert Day5(data) == (143, 123), "❌"; print(" ⭐ ⭐")
+
