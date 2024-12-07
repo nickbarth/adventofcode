@@ -300,14 +300,12 @@ def Day6(data):
             y, x = ny, nx
     positions = walk(sy,sx,0)
     silver = len(positions)
-    socks = set()
     for ry, rx in positions:
         if (ry,rx) in rocks:
             continue
         rocks.add((ry,rx))
         if not walk(sy,sx,0):
             gold += 1
-            socks.add((ry,rx))
         rocks.remove((ry,rx))
     return (silver, gold)
 data = """
