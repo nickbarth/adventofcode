@@ -7,6 +7,8 @@ from time import sleep
 from datetime import datetime
 from heapq import heappush, heappop
 from collections import Counter
+from collections import Counter, defaultdict
+from functools import cache
 
 print()
 print("##########################")
@@ -320,5 +322,41 @@ data = """
 #.........
 ......#...
 """
+print("Day 6:", end="")
 assert Day6(data) == (41, 6), "❌"; print(" ⭐ ⭐")
+
+
+def Day7(data):
+    silver = gold = 0
+    for line in data.strip().splitlines():
+        target = int(line.split(":")[0])
+        numbers = list(map(int, line.split(":")[1].split()))
+        def dfs(i, total, isgold):
+            if i == len(numbers) and total == target:
+                return True
+            if i >= len(numbers) or total > target:
+                return False
+            return dfs(i+1, total + numbers[i], isgold) \
+                or dfs(i+1, total * numbers[i], isgold) \
+                or (isgold and dfs(i+1, int(str(total) + str(numbers[i])), isgold))
+        if dfs(0, 0, False):
+            silver += target
+        elif dfs(0, 0, True):
+            gold += target
+    return (silver, gold+silver)
+data = """
+190: 10 19
+3267: 81 40 27
+83: 17 5
+156: 15 6
+7290: 6 8 6 15
+161011: 16 10 13
+192: 17 8 14
+21037: 9 7 18 13
+292: 11 6 16 20
+"""
+print("Day 7:", end="")
+assert Day7(data) == (3749,11387), "❌"; print(" ⭐ ⭐")
+
+
 
