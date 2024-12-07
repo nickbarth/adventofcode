@@ -341,9 +341,10 @@ def Day7(data):
                 or (isgold and dfs(i+1, int(str(total) + str(numbers[i])), isgold))
         if dfs(0, 0, False):
             silver += target
+            gold += target
         elif dfs(0, 0, True):
             gold += target
-    return (silver, gold+silver)
+    return (silver, gold)
 data = """
 190: 10 19
 3267: 81 40 27
@@ -357,6 +358,5 @@ data = """
 """
 print("Day 7:", end="")
 assert Day7(data) == (3749,11387), "❌"; print(" ⭐ ⭐")
-
 
 
