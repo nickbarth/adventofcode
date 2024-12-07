@@ -251,3 +251,74 @@ data = """
 print("Day 5:", end="")
 assert Day5(data) == (143, 123), "❌"; print(" ⭐ ⭐")
 
+
+def Day6(data):
+    silver = gold = 0
+    data = data.strip()
+    pos = data.replace("\n", "").index("^")
+    cols = data.index("\n")
+    rows = data.count("\n") + 1
+    sy, sx = 0, 0
+    rocks = set()
+    for i in range(len(data.strip())):
+        if data[i] == "#":
+            rocks.add((i // (cols + 1), i % (rows + 1)))
+        elif data[i] == "^":
+            sy, sx = i // (cols + 1), i % (rows + 1)
+    dirs = [(-1,0), (0,1), (1,0), (0,-1)]
+    def inbounds(y,x):
+        return (0 <= y < rows) and (0 <= x < cols)
+    def isrock(y,x):
+        return (y,x) in rocks
+    def walk(y,x,curr):
+        positions = set()
+        dirpositions = set()
+        while True:
+            # check seen
+            if (curr, y, x) in dirpositions:
+                return False
+            # update position
+            positions.add((y,x))
+            dirpositions.add((curr,y,x))
+            # new position
+            ny, nx = y + dirs[curr][0], x + dirs[curr][1]
+            if not inbounds(ny,nx):
+                return positions
+            # wall turn right
+            if isrock(ny,nx):
+                dirpositions.add((curr,y,x))
+                curr = (curr + 1) % 4
+                ny, nx = y + dirs[curr][0], x + dirs[curr][1]
+            # corner check
+            if isrock(ny,nx):
+                dirpositions.add((curr,y,x))
+                curr = (curr + 1) % 4
+                ny, nx = y + dirs[curr][0], x + dirs[curr][1]
+            # update position
+            y, x = ny, nx
+    positions = walk(sy,sx,0)
+    silver = len(positions)
+    socks = set()
+    for ry, rx in positions:
+        if (ry,rx) in rocks:
+            continue
+        rocks.add((ry,rx))
+        if not walk(sy,sx,0):
+            gold += 1
+            socks.add((ry,rx))
+        rocks.remove((ry,rx))
+    return (silver, gold)
+data = """
+....#.....
+.........#
+..........
+..#.......
+.......#..
+..........
+.#..^.....
+........#.
+#.........
+......#...
+"""
+assert Day6(data) == (41, 6), "❌"; print(" ⭐ ⭐")
+
