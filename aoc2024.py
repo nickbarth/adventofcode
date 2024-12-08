@@ -380,7 +380,6 @@ def Day8(data):
                 first = False
             if (y, x) not in antennas:
                 gold.add((y, x))
-            data[y][x] = "%"
             if not powered:
                 break
             y, x = y + dy, x + dx
