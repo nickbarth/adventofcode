@@ -358,3 +358,61 @@ print("Day 7:", end="")
 assert Day7(data) == (3749,11387), "❌"; print(" ⭐ ⭐")
 
 
+def Day8(data):
+    silver, gold = set(), set()
+    data = [list(x) for x in data.strip().splitlines()]
+    cols = len(data[0])
+    rows = len(data)
+    antenna = defaultdict(set)
+    antennas = set()
+    for y in range(rows):
+        for x in range(cols):
+            if data[y][x] == ".":
+                continue
+            antenna[data[y][x]].add((y,x))
+            antennas.add((y,x))
+    def propagate_signal(y, x, dy, dx, powered):
+        y, x = y + dy, x + dx
+        first = True
+        while 0 <= y < rows and 0 <= x < cols:
+            if first:
+                silver.add((y, x))
+                first = False
+            if (y, x) not in antennas:
+                gold.add((y, x))
+            data[y][x] = "%"
+            if not powered:
+                break
+            y, x = y + dy, x + dx
+    completed = set()
+    for key, nodes in antenna.items():
+        powered = False
+        if len(nodes) > 1:
+            powered = True
+        for y1,x1 in nodes:
+            for y2,x2 in nodes:
+                if y1 == y2 and x1 == x2:
+                    continue
+                if (y1, x1, y2, x2) in completed:
+                    continue
+                completed.add((y1, x1, y2, x2))
+                completed.add((y2, x2, y1, x1))
+                propagate_signal(y1, x1, y1-y2, x1-x2, powered)
+                propagate_signal(y2, x2, y2-y1, x2-x1, powered)
+    return (len(silver), len(gold) + len(antennas))
+data = """
+............
+........0...
+.....0......
+.......0....
+....0.......
+......A.....
+............
+............
+........A...
+.........A..
+............
+............
+"""
+print("Day 8:", end="")
+assert Day8(data) == (14,34), "❌"; print(" ⭐ ⭐")
