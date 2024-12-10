@@ -415,3 +415,40 @@ data = """
 """
 print("Day 8:", end="")
 assert Day8(data) == (14,34), "❌"; print(" ⭐ ⭐")
+
+
+def Day10(data):
+    silver = set(); gold = 0
+    grid = [list(map(int,x)) for x in data.strip().splitlines()]
+    cols, rows = len(grid[0]), len(grid)
+    starts = set()
+    for y in range(rows):
+        for x in range(cols):
+            if grid[y][x] == 0:
+                starts.add((y,x))
+    def dfs(y, x, sy, sx):
+        curr = grid[y][x]
+        if curr == 9:
+            silver.add((sy,sx,y,x))
+            return 1
+        total = 0
+        for dy, dx in [(0,1),(1,0),(0,-1),(-1,0)]:
+            if 0 <= y+dy < rows and 0 <= x+dx < cols \
+            and curr + 1 == grid[y+dy][x+dx]:
+                total += dfs(y+dy, x+dx, sy, sx)
+        return total
+    for y, x in starts:
+        gold += dfs(y, x, y, x)
+    return (len(silver), gold)
+data = """
+89010123
+78121874
+87430965
+96549874
+45678903
+32019012
+01329801
+10456732
+"""
+print("Day 10:", end="")
+assert Day10(data) == (36, 81), "❌"; print(" ⭐ ⭐")
