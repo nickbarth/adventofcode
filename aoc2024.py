@@ -57,7 +57,7 @@ data = """
 3   3
 """
 print("Day 1:", end="")
-assert (11, 31) == Day1(data), "❌"; print(" ⭐ ⭐")
+assert Day1(data) == (11, 31), "❌"; print(" ⭐ ⭐")
 
 def Day2(data):
     silver = gold = 0
@@ -510,3 +510,29 @@ data = """
 """
 print("Day 10:", end="")
 assert Day10(data) == (36, 81), "❌"; print(" ⭐ ⭐")
+
+
+def Day11(data):
+    silver = 0; gold = 0
+    data = list(map(int, data.strip().split(" ")))
+    @cache
+    def turn(n, step):
+        if step == 0:
+            return 1
+        if n == 0:
+            return turn(1, step-1)
+        elif len(str(n)) % 2 == 0:
+            nstr = str(n)
+            return turn(int(nstr[:len(nstr)//2]), step-1) + \
+                   turn(int(nstr[len(nstr)//2:]), step-1)
+        else:
+            return turn(n * 2024, step-1)
+    for n in data:
+        gold += turn(n, 75)
+        silver += turn(n, 25)
+    return silver, gold
+data = """
+125 17
+"""
+print("Day 11:", end="")
+assert Day11(data) == (55312, 65601038650482), "❌"; print(" ⭐ ⭐")
