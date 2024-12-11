@@ -466,7 +466,6 @@ def Day9(data):
             silver_checksum += i * silver[i]
         if gold[i] != ".":
             gold_checksum += i * gold[i]
-    print(silver_checksum, gold_checksum)
     return (silver_checksum, gold_checksum)
 print("Day 9:", end="")
 data = """
