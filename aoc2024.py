@@ -416,6 +416,64 @@ data = """
 print("Day 8:", end="")
 assert Day8(data) == (14,34), "❌"; print(" ⭐ ⭐")
 
+def Day9(data):
+    counts = list(map(int, list(data.strip())))
+    blocks = []
+    block_id = 0
+    block_idx = 0
+    memory = []
+    for i in range(len(counts)):
+        if i % 2 == 0:
+            memory.extend([block_id] * counts[i])
+            blocks.append([block_id, counts[i], block_idx])
+            block_id += 1
+            block_idx += counts[i]
+        else:
+            memory.extend(["."] * counts[i])
+            block_idx += counts[i]
+    silver = memory.copy()
+    gold = memory.copy()
+    for block_id, size, block_idx in blocks[::-1]:
+        # gold memory
+        space_index = -1
+        empty_space = 0
+        for i in range(block_idx):
+            if gold[i] == ".":
+                empty_space += 1
+                if empty_space == size:
+                    space_index = i - size + 1
+                    break
+            else:
+                empty_space = 0
+                space_index = -1
+        if space_index != -1:
+            for i in range(size):
+                gold[space_index + i] = block_id
+                gold[block_idx + i] = "."
+        # silver memory
+        silver_filled = 0
+        for i in range(block_idx):
+            if silver[i] == "." or silver[i] == block_id:
+                silver[i] = block_id
+                silver_filled += 1
+            if silver_filled == size:
+                break
+        for i in range(silver_filled):
+            silver[block_idx + size - i - 1] = "."
+    silver_checksum = gold_checksum = 0
+    for i in range(len(memory)):
+        if silver[i] != ".":
+            silver_checksum += i * silver[i]
+        if gold[i] != ".":
+            gold_checksum += i * gold[i]
+    print(silver_checksum, gold_checksum)
+    return (silver_checksum, gold_checksum)
+print("Day 9:", end="")
+data = """
+2333133121414131402
+"""
+assert Day9(data) == (1928, 2858), "❌"; print(" ⭐ ⭐")
+
 
 def Day10(data):
     silver = set(); gold = 0
