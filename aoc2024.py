@@ -593,7 +593,7 @@ def Day12(data):
                     continue
                 sides += 1
             # vertical segments
-            if x1 == x2: # vertical only
+            if x1 == x2:
                 if ((y1-1, x1), (y2-1, x2)) in edges: # top most
                     continue
                 sides += 1
