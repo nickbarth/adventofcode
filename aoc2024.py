@@ -584,18 +584,15 @@ def Day12(data):
     # count sides by segments
     def count_sides(edges, idx):
         sides = 0
-        # horizontal segments
         for edge in edges:
             y1, x1 = edge[0]
             y2, x2 = edge[1]
-            if y1 == y2: # horizontal only
+            # horizontal segments
+            if y1 == y2:
                 if ((y1, x1-1), (y2, x2-1)) in edges: # left most
                     continue
                 sides += 1
-        # vertical segments
-        for edge in edges:
-            y1, x1 = edge[0]
-            y2, x2 = edge[1]
+            # vertical segments
             if x1 == x2: # vertical only
                 if ((y1-1, x1), (y2-1, x2)) in edges: # top most
                     continue
