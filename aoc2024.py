@@ -535,3 +535,104 @@ data = """
 """
 print("Day 11:", end="")
 assert Day11(data) == (55312, 65601038650482), "❌"; print(" ⭐ ⭐")
+
+
+def Day12(data):
+    silver = 0; gold = 0
+    matrix = [list(x) for x in data.strip().splitlines()]
+    rows, cols = len(matrix), len(matrix[0])
+    areas = defaultdict(set)
+    edges = defaultdict(Counter)
+    seen = set()
+    # record area and edges
+    def flood_fill(y, x, sy, sx, idx):
+        if not (0 <= y < rows and 0 <= x < cols):
+            return
+        if (y, x) in seen:
+            return
+        if matrix[y][x] != matrix[sy][sx]:
+            return
+        seen.add((y, x))
+        areas[idx].add((y, x))
+        flood_fill(y+1, x, sy, sx, idx)
+        flood_fill(y-1, x, sy, sx, idx)
+        flood_fill(y, x+1, sy, sx, idx)
+        flood_fill(y, x-1, sy, sx, idx)
+    idx = 0
+    for y in range(rows):
+        for x in range(cols):
+            if (y, x) in seen:
+                continue
+            flood_fill(y, x, y, x, idx)
+            idx += 1
+    for idx, position in areas.items():
+        for y, x in position:
+            # forward edge
+            edges[idx][((y,x), (y,x+1))] += 1
+            edges[idx][((y,x), (y+1,x))] += 1
+            edges[idx][((y+1,x), (y+1,x+1))] += 1
+            edges[idx][((y,x+1), (y+1,x+1))] += 1
+            # backwards edge
+            edges[idx][((y,x+1), (y,x))] += 1
+            edges[idx][((y+1,x), (y,x))] += 1
+            edges[idx][((y+1,x+1), (y+1,x))] += 1
+            edges[idx][((y+1,x+1), (y,x+1))] += 1
+    # filter non-unique edges
+    for idx in edges.keys():
+        edge_set = set([edge for edge, count in edges[idx].items() if count == 1])
+        edges[idx] = edge_set
+    # count sides by segments
+    def count_sides(edges, idx):
+        sides = 0
+        # horizontal segments
+        for edge in edges:
+            y1, x1 = edge[0]
+            y2, x2 = edge[1]
+            if y1 == y2: # horizontal only
+                if ((y1, x1-1), (y2, x2-1)) in edges: # left most
+                    continue
+                sides += 1
+        # vertical segments
+        for edge in edges:
+            y1, x1 = edge[0]
+            y2, x2 = edge[1]
+            if x1 == x2: # vertical only
+                if ((y1-1, x1), (y2-1, x2)) in edges: # top most
+                    continue
+                sides += 1
+        return sides // 2
+    # calculate perimeter
+    for idx, adj in edges.items():
+        curr = None
+        perimeter = 0
+        sides = count_sides(adj, idx)
+        while adj:
+            if not curr:
+                curr = next(iter(adj))
+            y, x = curr[1] # end of current edge
+            for dy, dx in [(0,1), (1,0), (0,-1), (-1,0)]:
+                next_edge = ((y,x), (y+dy, x+dx))
+                altr_edge = ((y+dy,x+dx), (y, x))
+                if next_edge in adj:
+                    curr = next_edge
+                    adj.remove(next_edge)
+                    adj.remove(altr_edge)
+                    perimeter += 1
+            curr = None
+        silver += perimeter * len(areas[idx])
+        gold += sides * len(areas[idx])
+    return (silver, gold)
+data = """
+RRRRIICCFF
+RRRRIICCCF
+VVRRRCCFFF
+VVRCCCJFFF
+VVVVCJJCFE
+VVIVCCJJEE
+VVIIICJJEE
+MIIIIIJJEE
+MIIISIJEEE
+MMMISSJEEE
+"""
+print("Day 12:", end="")
+assert Day12(data) == (1930,1206), "❌"; print(" ⭐ ⭐")
