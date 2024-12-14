@@ -6,9 +6,9 @@ import requests
 from time import sleep
 from datetime import datetime
 from heapq import heappush, heappop
-from collections import Counter
 from collections import Counter, defaultdict
-from functools import cache
+from functools import cache, reduce
+from operator import mul
 
 print()
 print("##########################")
