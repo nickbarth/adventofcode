@@ -635,6 +635,47 @@ print("Day 12:", end="")
 assert Day12(data) == (1930,1206), "❌"; print(" ⭐ ⭐")
 
 
+def Day13(data):
+    silver = 0; gold = 0
+    data = data.strip().splitlines()
+    games = []
+    for i in range(0, len(data), 4):
+        a = tuple(map(int,re.findall(r"(\d+)", data[i+0])))
+        b = tuple(map(int,re.findall(r"(\d+)", data[i+1])))
+        goal = tuple(map(int,re.findall(r"(\d+)", data[i+2])))
+        games.append((a, b, goal))
+    @cache
+    def dfs(x1, y1, x2, y2, gx, gy):
+        if gx < 0 or gy < 0:
+            return math.inf
+        if gx == 0 and gy == 0:
+            return 0
+        return min(
+            3+dfs(x1, y1, x2, y2, gx - x1, gy - y1),
+            1+dfs(x1, y1, x2, y2, gx - x2, gy - y2)
+        )
+    for ((x1, y1), (x2,y2), (gx,gy)) in games:
+        dist = dfs(x1, y1, x2, y2, gx, gy)
+        silver += dist if dist != math.inf else 0
+    return (silver, gold)
+data = """
+Button A: X+94, Y+34
+Button B: X+22, Y+67
+Prize: X=8400, Y=5400\n
+Button A: X+26, Y+66
+Button B: X+67, Y+21
+Prize: X=12748, Y=12176\n
+Button A: X+17, Y+86
+Button B: X+84, Y+37
+Prize: X=7870, Y=6450\n
+Button A: X+69, Y+23
+Button B: X+27, Y+71
+Prize: X=18641, Y=10279
+"""
+print("Day 13:", end="")
+assert Day13(data) == (480,0), "❌"; print(" ⭐ ⭐")
+
+
 def Day14(data):
     silver = 0; gold = 0
     cols = 11; rows = 7
