@@ -2,6 +2,7 @@
 
 import re
 import os
+import math
 import requests
 from time import sleep
 from datetime import datetime
@@ -705,7 +706,6 @@ def Day14(data):
             silver = reduce(mul, count_quads())
         elif i > 99 and len(bots) == len(set(bots)):
             gold = i + 1; break
-    print(silver, gold)
     return (silver, gold)
 data = """
 p=0,4 v=3,-3
