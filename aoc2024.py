@@ -633,3 +633,52 @@ MMMISSJEEE
 """
 print("Day 12:", end="")
 assert Day12(data) == (1930,1206), "❌"; print(" ⭐ ⭐")
+
+
+def Day14(data):
+    silver = 0; gold = 0
+    cols = 11; rows = 7
+    data = data.strip().splitlines()
+    bots, vels = [], []
+    for idx, line in enumerate(data):
+        pos = tuple(map(int, line.split(" ")[0][2:].split(",")))
+        vel = tuple(map(int, line.split(" ")[1][2:].split(",")))
+        bots.append(pos)
+        vels.append(vel)
+    def count_quads():
+        quads = defaultdict(int)
+        for bot in bots:
+            x, y = bot
+            if x == cols // 2 or y == rows // 2:
+                continue
+            quads[(x > cols // 2, y > rows // 2)] += 1
+        return quads.values()
+    for i in range(10000):
+        for idx in range(len(bots)):
+            x, y = bots[idx]
+            dx, dy = vels[idx]
+            x = (x + dx) % cols
+            y = (y + dy) % rows
+            bots[idx] = (x, y)
+        if i == 99:
+            silver = reduce(mul, count_quads())
+        elif i > 99 and len(bots) == len(set(bots)):
+            gold = i + 1; break
+    print(silver, gold)
+    return (silver, gold)
+data = """
+p=0,4 v=3,-3
+p=6,3 v=-1,-3
+p=10,3 v=-1,2
+p=2,0 v=2,-1
+p=0,0 v=1,3
+p=3,0 v=-2,-2
+p=7,6 v=-1,-3
+p=3,0 v=-1,-2
+p=9,3 v=2,3
+p=7,3 v=-1,2
+p=2,4 v=2,-3
+p=9,5 v=-3,-3
+"""
+print("Day 14:", end="")
+assert Day14(data) == (12, 105), "❌"; print(" ⭐ ⭐")
