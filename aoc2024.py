@@ -515,22 +515,26 @@ assert Day10(data) == (36, 81), "❌"; print(" ⭐ ⭐")
 def Day11(data):
     silver = 0; gold = 0
     data = list(map(int, data.strip().split(" ")))
-    @cache
-    def turn(n, step):
-        if step == 0:
-            return 1
-        if n == 0:
-            return turn(1, step-1)
-        elif len(str(n)) % 2 == 0:
-            nstr = str(n)
-            return turn(int(nstr[:len(nstr)//2]), step-1) + \
-                   turn(int(nstr[len(nstr)//2:]), step-1)
-        else:
-            return turn(n * 2024, step-1)
-    for n in data:
-        gold += turn(n, 75)
-        silver += turn(n, 25)
-    return silver, gold
+    tab = defaultdict(int)
+    for stone in data:
+        tab[stone] = 1
+    for i in range(75):
+        step = defaultdict(int)
+        for stone, count in tab.items():
+            if stone == 0:
+                step[1] += count
+            elif (digits := int(1+math.log10(stone))) % 2 == 0:
+                power = pow(10, digits // 2)
+                step[int(stone // power)] += count
+                step[int(stone % power)] += count
+            else:
+                step[stone * 2024] += count
+        tab = step
+        if (i + 1) == 25:
+            silver = sum(tab.values())
+        if (i + 1) == 75:
+            gold = sum(tab.values())
+    return (silver, gold)
 data = """
 125 17
 """
