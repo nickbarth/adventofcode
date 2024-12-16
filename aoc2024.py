@@ -727,3 +727,64 @@ p=9,5 v=-3,-3
 """
 print("Day 14:", end="")
 assert Day14(data) == (12, 105), "❌"; print(" ⭐ ⭐")
+
+
+def Day15(data):
+    silver = 0; gold = 0
+    dirs = { '<': (0, -1), '>': (0, 1), '^': (-1, 0), 'v': (1, 0) }
+    matrix = []
+    moves = []
+    for line in data.strip().splitlines():
+        if line == "\n":
+            continue
+        elif line.startswith("#"):
+            matrix.append(list(line))
+        else:
+            moves.extend(dirs[x] for x in line)
+    cols = len(matrix[0])
+    rows = len(matrix)
+    walls = set()
+    boxes = set()
+    robot = tuple()
+    for y in range(rows):
+        for x in range(cols):
+            if matrix[y][x] == "#":
+                walls.add((y,x))
+            elif matrix[y][x] == "O":
+                boxes.add((y,x))
+            elif matrix[y][x] == "@":
+                robot = (y,x)
+    def try_move(y, x, dy, dx):
+        if (y+dy, x+dx) in walls:
+            return False
+        if (y+dy, x+dx) in boxes:
+            return try_move(y+dy, x+dx, dy, dx)
+        return True
+    def push(y, x, dy, dx):
+        if (y,x) in walls:
+            return
+        if (y,x) in boxes:
+            push(y+dy, x+dx, dy, dx)
+            boxes.remove((y,x))
+            boxes.add((y+dy, x+dx))
+    for dy, dx in moves:
+        y, x = robot
+        if try_move(y, x, dy, dx):
+            robot = (y+dy, x+dx)
+            push(y+dy, x+dx, dy, dx)
+    for y, x in boxes:
+        silver += (100 * y) + x
+    return (silver, gold)
+data = """
+########
+#..O.O.#
+##@.O..#
+#...O..#
+#.#.O..#
+#...O..#
+#......#
+########\n
+<^^>>>vv<v>>v<<
+"""
+print("Day 15:", end="")
+assert Day15(data) == (2028, 0), "❌"; print(" ⭐ ⭐")
