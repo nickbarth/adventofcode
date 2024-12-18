@@ -10,6 +10,7 @@ from heapq import heappush, heappop
 from collections import Counter, defaultdict
 from functools import cache, reduce
 from operator import mul
+import numpy as np
 
 print()
 print("##########################")
@@ -663,6 +664,37 @@ def Day13(data):
         dist = dfs(x1, y1, x2, y2, gx, gy)
         silver += dist if dist != math.inf else 0
     return (silver, gold)
+
+
+def Day13(data):
+    silver = 0; gold = 0
+    data = data.strip().splitlines()
+    games = []
+    for i in range(0, len(data), 4):
+        if not data[i]: continue
+        a = tuple(map(int,re.findall(r"(\d+)", data[i+0])))
+        b = tuple(map(int,re.findall(r"(\d+)", data[i+1])))
+        goal = tuple(map(int,re.findall(r"(\d+)", data[i+2])))
+        games.append((a, b, goal))
+    for ((x1, y1), (x2,y2), (gx,gy)) in games:
+        # silver
+        solution = np.linalg.solve([[x1, x2], [y1, y2]], [gx, gy])
+        a_presses, b_presses = np.round(solution).astype(int)
+        x = x1 * a_presses + x2 * b_presses
+        y = y1 * a_presses + y2 * b_presses
+        # verify
+        if gx == x and gy == y:
+            silver += 3 * a_presses + b_presses
+        # gold
+        offset = 10000000000000
+        solution = np.linalg.solve([[x1, x2], [y1, y2]], [gx+offset, gy+offset])
+        a_presses, b_presses = np.round(solution).astype(int)
+        x = x1 * a_presses + x2 * b_presses
+        y = y1 * a_presses + y2 * b_presses
+        # verify
+        if (gx+offset) == x and (gy+offset) == y:
+            gold += 3 * a_presses + b_presses
+    return (silver, gold)
 data = """
 Button A: X+94, Y+34
 Button B: X+22, Y+67
@@ -678,7 +710,7 @@ Button B: X+27, Y+71
 Prize: X=18641, Y=10279
 """
 print("Day 13:", end="")
-assert Day13(data) == (480,0), "❌"; print(" ⭐ ⭐")
+assert Day13(data) == (480,875318608908), "❌"; print(" ⭐ ⭐")
 
 
 def Day14(data):
@@ -788,3 +820,131 @@ data = """
 """
 print("Day 15:", end="")
 assert Day15(data) == (2028, 0), "❌"; print(" ⭐ ⭐")
+
+def Day16(data):
+    silver = inf; gold = set()
+    matrix = [list(x) for x in data.strip().splitlines()]
+    walls = set()
+    start, goal = tuple(), tuple()
+    curr = tuple()
+    for y in range(len(matrix)):
+        for x in range(len(matrix[0])):
+            if matrix[y][x] == "#":
+                walls.add((y,x))
+            elif matrix[y][x] == "S":
+                start = (y,x)
+            elif matrix[y][x] == "E":
+                goal = (y,x)
+    visited = set()
+    scores = {}
+    minheap = [(1, (0,1), start, [start, goal])]
+    while minheap:
+        score, (py,px), (y, x), path = heappop(minheap)
+        for dy, dx in ((0,1), (1,0), (0,-1), (-1,0)):
+            ny, nx = y + dy, x + dx
+            if (ny, nx) == goal and score <= silver:
+                silver = score
+                gold = gold | set(path)
+                continue
+            if (ny, nx) in walls:
+                continue
+            if (ny, nx) in visited and score > 1000 + scores[(ny, nx)]:
+                continue
+            visited.add((ny, nx))
+            scores[(ny, nx)] = min(scores.get((ny, nx), math.inf), score)
+            curpath = path + [(ny, nx)]
+            cost = 1 if (dy,dx) == (py, px) else 1001
+            heappush(minheap, (score + cost, (dy, dx), (ny, nx), curpath))
+    return (silver, len(gold))
+data = """
+###############
+#.......#....E#
+#.#.###.#.###.#
+#.....#.#...#.#
+#.###.#####.#.#
+#.#.#.......#.#
+#.#.#####.###.#
+#...........#.#
+###.#.#####.#.#
+#...#.....#.#.#
+#.#.#.###.#.#.#
+#.....#...#.#.#
+#.###.#.#.#.#.#
+#S..#.....#...#
+###############
+"""
+print("Day 16:", end="")
+assert Day16(data) == (7036, 45), "❌"; print(" ⭐")
+
+
+def Day17(data):
+    DEBUG = False
+    data = data.strip().splitlines()
+    reg = { "pc": 0 }
+    program = []
+    for line in data:
+        if line.startswith("Register"):
+            reg[line.split(":")[0].split()[-1]] = int(line.split(":")[1])
+        elif line.startswith("Program"):
+            program = list(map(int, line.split(":")[1].split(",")))
+    def combo(num):
+        reg_digit = { 4: "A", 5: "B", 6: "C" }
+        return num if num <= 3 else reg[reg_digit[num]]
+    def adv(op): # 0
+        cop = combo(op)
+        if DEBUG: print("adv", cop)
+        reg["A"] = reg["A"] // (1 << cop)
+        reg["pc"] += 2
+    def bxl(op): # 1
+        if DEBUG: print("bxl", op)
+        reg["B"] ^= op
+        reg["pc"] += 2
+    def bst(op): # 2
+        cop = combo(op)
+        if DEBUG: print("bst", cop, cop & 0b111)
+        reg["B"] = cop & 0b111
+        reg["pc"] += 2
+    def jnz(op): # 3
+        if DEBUG: print("jnz", op)
+        if reg["A"] == 0:
+            reg["pc"] += 2
+            return
+        reg["pc"] = op
+    def bxc(op): # 4
+        if DEBUG: print("bxc", op)
+        reg["B"] ^= reg["C"]
+        reg["pc"] += 2
+    def out(op): # 5
+        cop = combo(op)
+        if DEBUG: print("out", cop, cop & 0b111)
+        reg["pc"] += 2
+        return str(cop & 0b111)
+    def bdv(op): # 6
+        cop = combo(op)
+        if DEBUG: print("bdv", cop)
+        reg["B"] = reg["A"] // (1 << cop)
+        reg["pc"] += 2
+    def cdv(op): # 7
+        cop = combo(op)
+        if DEBUG: print("cdv", cop)
+        reg["C"] = reg["A"] // (1 << cop)
+        reg["pc"] += 2
+    INSTR = { 0: adv, 1: bxl, 2: bst, 3: jnz, \
+              4: bxc, 5: out, 6: bdv, 7: cdv }
+    output = []
+    while reg["pc"] < len(program):
+        instr = program[reg["pc"]]
+        op = program[reg["pc"]+1]
+        if out := INSTR[instr](op):
+            output.append(out)
+        if DEBUG: print(reg)
+        if DEBUG: input()
+    return (",".join(output))
+data = """
+Register A: 729
+Register B: 0
+Register C: 0\n
+Program: 0,1,5,4,3,0
+"""
+print("Day 17:", end="")
+assert Day17(data) == ("4,6,3,5,6,3,5,2,1,0"), "❌"; print(" ⭐")
