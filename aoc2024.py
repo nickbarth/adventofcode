@@ -987,6 +987,5 @@ data = """
 2,5\n6,5\n1,4\n0,4\n6,4\n1,1\n6,1
 1,0\n0,5\n1,6\n2,0
 """
-Day18(data)
 print("Day 18:", end="")
 assert Day18(data) == (22, '1,6'), "❌"; print(" ⭐ ⭐")
