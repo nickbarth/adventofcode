@@ -948,3 +948,45 @@ Program: 0,1,5,4,3,0
 """
 print("Day 17:", end="")
 assert Day17(data) == ("4,6,3,5,6,3,5,2,1,0"), "❌"; print(" ⭐")
+
+
+def Day18(data):
+    silver = 0; gold = 0
+    lines = [line.split(",") for line in data.strip().splitlines()]
+    allwalls = [(int(y),int(x)) for x,y in lines]
+    start, goal = (0,0), (6,6)
+    cols, rows = 7, 7
+    def manhattan(a, b):
+        return abs(a[0] - b[0]) + abs(a[1] - b[1])
+    for i in range(len(allwalls)):
+        walls = set(allwalls[:i])
+        heap = [(manhattan(start, goal), 0, start)]
+        visited = set()
+        while heap:
+            score, steps, (y, x) = heappop(heap)
+            if (y, x) == goal:
+                if i == 12:
+                    silver = steps
+                break
+            for dy, dx in ((1,0), (0,1), (-1,0), (0,-1)):
+                ny, nx = y + dy, x + dx
+                if (ny, nx) in visited:
+                    continue
+                if not (0 <= ny < rows and 0 <= nx < cols):
+                    continue
+                if (ny, nx) in walls:
+                    continue
+                visited.add((ny, nx))
+                heappush(heap, (manhattan((ny, nx), goal), steps + 1, (ny, nx)))
+        if not heap:
+            gold = ",".join(map(str,allwalls[i-1]))
+            return (silver, gold)
+data = """
+5,4\n4,2\n4,5\n3,0\n2,1\n6,3\n2,4
+1,5\n0,6\n3,3\n2,6\n5,1\n1,2\n5,5
+2,5\n6,5\n1,4\n0,4\n6,4\n1,1\n6,1
+1,0\n0,5\n1,6\n2,0
+"""
+Day18(data)
+print("Day 18:", end="")
+assert Day18(data) == (22, '1,6'), "❌"; print(" ⭐ ⭐")
