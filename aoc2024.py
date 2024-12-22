@@ -1007,7 +1007,7 @@ def Day22(data):
             secret = mix(secret, secret << 6)
             secret = prune(secret)
             secret = mix(secret, secret >> 5)
-            secret = prune(secret)
+            # secret = prune(secret)
             secret = mix(secret, secret << 11)
             secret = prune(secret)
             prices.append(secret % 10)
