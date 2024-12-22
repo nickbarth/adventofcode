@@ -989,3 +989,46 @@ data = """
 """
 print("Day 18:", end="")
 assert Day18(data) == (22, '1,6'), "❌"; print(" ⭐ ⭐")
+
+
+def Day22(data):
+    silver = 0; gold = 0
+    data = [int(x) for x in data.strip().splitlines()]
+    freq = defaultdict(int)
+    def mix(secret, value):
+        return secret ^ value
+    def prune(secret):
+        return secret % 16777216
+    for i in data:
+        num = i
+        change = [num % 10]
+        prices = [0]
+        seen = set()
+        for _ in range(2000):
+            secret = num
+            secret = mix(secret, secret << 6)
+            secret = prune(secret)
+            secret = mix(secret, secret >> 5)
+            secret = prune(secret)
+            secret = mix(secret, secret << 11)
+            secret = prune(secret)
+            num = secret
+            if len(prices) > 3:
+                prices.pop(0)
+                change.pop(0)
+            prices.append(num % 10)
+            change.append(prices[-1] - prices[-2])
+            if len(change) == 4 and tuple(change) not in seen:
+                freq[tuple(change)] += prices[-1]
+                seen.add(tuple(change))
+        silver += num
+    gold = max(freq.values())
+    return silver, gold
+data = """
+1
+2
+3
+2024
+"""
+print("Day 22:", end="")
+assert Day22(data) == (37990510, 23), "❌"; print(" ⭐ ⭐")
