@@ -1010,16 +1010,14 @@ def Day22(data):
             secret = prune(secret)
             secret = mix(secret, secret << 11)
             secret = prune(secret)
-            if len(prices) > 3:
-                prices.pop(0)
-                change.pop(0)
-            prices.append(num % 10)
+            prices.append(secret % 10)
             change.append(prices[-1] - prices[-2])
-            if len(change) == 4 and tuple(change) not in seen:
-                freq[tuple(change)] += prices[-1]
-                seen.add(tuple(change))
-        silver += num
-    return silver, max(freq.values())
+            if tuple(change[-4:]) not in seen:
+                freq[tuple(change[-4:])] += prices[-1]
+                seen.add(tuple(change[-4:]))
+        silver += secret
+    gold = max(freq.values())
+    return silver, gold
 data = """
 1
 2
