@@ -991,6 +991,42 @@ print("Day 18:", end="")
 assert Day18(data) == (22, '1,6'), "❌"; print(" ⭐ ⭐")
 
 
+def Day19(data):
+    silver = 0; gold = 0
+    data = data.strip().splitlines()
+    patterns = set(data[0].split(", "))
+    designs = set(data[2:])
+    @cache
+    def dfs(design):
+        if len(design) == 0:
+            return 1
+        total = 0
+        for pattern in patterns:
+            if design.startswith(pattern):
+                n = len(pattern)
+                total += dfs(design[n:])
+        return total
+    for design in designs:
+        combinations = dfs(design)
+        if combinations > 0:
+            silver += 1
+        gold += combinations
+    return (silver, gold)
+data = """
+r, wr, b, g, bwu, rb, gb, br\n
+brwrr
+bggr
+gbbr
+rrbgbr
+ubwu
+bwurrg
+brgr
+bbrgwb
+"""
+print("Day 19:", end="")
+assert Day19(data) == (6, 16), "❌"; print(" ⭐ ⭐")
+
+
 def Day22(data):
     silver = 0; gold = 0
     data = [int(x) for x in data.strip().splitlines()]
