@@ -999,20 +999,17 @@ def Day22(data):
         return secret ^ value
     def prune(secret):
         return secret % 16777216
-    for i in data:
-        num = i
+    for secret in data:
         change = [num % 10]
         prices = [0]
         seen = set()
         for _ in range(2000):
-            secret = num
             secret = mix(secret, secret << 6)
             secret = prune(secret)
             secret = mix(secret, secret >> 5)
             secret = prune(secret)
             secret = mix(secret, secret << 11)
             secret = prune(secret)
-            num = secret
             if len(prices) > 3:
                 prices.pop(0)
                 change.pop(0)
@@ -1022,8 +1019,7 @@ def Day22(data):
                 freq[tuple(change)] += prices[-1]
                 seen.add(tuple(change))
         silver += num
-    gold = max(freq.values())
-    return silver, gold
+    return silver, max(freq.values())
 data = """
 1
 2
