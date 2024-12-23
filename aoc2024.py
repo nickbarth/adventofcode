@@ -1062,3 +1062,47 @@ data = """
 """
 print("Day 22:", end="")
 assert Day22(data) == (37990510, 23), "❌"; print(" ⭐ ⭐")
+
+
+def Day23(data):
+    i = 1; silver = 0; gold = 0
+    data = [x.split("-") for x in data.strip().splitlines()]
+    adj = defaultdict(set)
+    for x, y in data:
+        adj[x].add(y)
+        adj[y].add(x)
+    all_edges = adj.keys()
+    connected = {frozenset({x}) for x in all_edges}
+    def check_connected(cycle, new_edge):
+        for edge in cycle:
+            if new_edge not in adj[edge]:
+                return False
+        return True
+    while len(connected) > 1:
+        new_connected = set()
+        for cycle in connected:
+            for edge in all_edges:
+                if edge in cycle:
+                    continue
+                if check_connected(cycle, edge):
+                    new_connected.add(cycle | {edge})
+        connected = new_connected; i += 1
+        if i == 3:
+            for cycle in connected:
+                for edge in cycle:
+                    if edge.startswith("t"):
+                        silver += 1
+                        break
+    gold = ",".join(sorted(next(iter(connected))))
+    return silver, gold
+data = """
+kh-tc\nqp-kh\nde-cg\nka-co\nyn-aq
+qp-ub\ncg-tb\nvc-aq\ntb-ka\nwh-tc
+yn-cg\nkh-ub\nta-co\nde-co\ntc-td
+tb-wq\nwh-td\nta-ka\ntd-qp\naq-cg
+wq-ub\nub-vc\nde-ta\nwq-aq\nwq-vc
+wh-yn\nka-de\nkh-ta\nco-tc\nwh-qp
+tb-vc\ntd-yn
+"""
+print("Day 23:", end="")
+assert Day23(data) == (7, 'co,de,ka,ta'), "❌"; print(" ⭐ ⭐")
